@@ -5,7 +5,7 @@
   offer_type          = var.offer_type
   kind                = var.cosmosdb_kind
   # ip_range_filter = var.ip_range_filter
- 
+  public_network_access_enabled = var.public_network_access_enabled
   consistency_policy {
     consistency_level       = var.consistency_level
     max_interval_in_seconds = var.max_interval_in_seconds
@@ -53,6 +53,3 @@ resource "azurerm_cosmosdb_mongo_database" "db" {
       max_throughput = var.max_throughput
   }
 }
- 
- 
- 
