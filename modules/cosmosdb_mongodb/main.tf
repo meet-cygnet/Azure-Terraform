@@ -52,4 +52,10 @@ resource "azurerm_cosmosdb_mongo_database" "db" {
   autoscale_settings{
       max_throughput = var.max_throughput
   }
+<<<<<<< HEAD
 }
+=======
+}
+ 
+ 
+>>>>>>> 15bde81 ({commit_message})

@@ -16,4 +16,19 @@ output "cosmosdb_endpoint" {
 output "database_id" {
   description = "The ID of the MongoDB database"
   value       = azurerm_cosmosdb_mongo_database.db.id
+<<<<<<< HEAD
 }
+=======
+}
+
+# output "cosmosdb_connection_string" {
+#   description = "The connection string for the Cosmos DB account"
+#   value       = azurerm_cosmosdb_account.cosmosdb.connection_strings[0]
+#   sensitive   = true
+# }
+
+# output "collection_id" {
+#   description = "The ID of the MongoDB collection"
+#   value       = azurerm_cosmosdb_mongo_collection.collection.id
+# } 
+>>>>>>> 15bde81 ({commit_message})
