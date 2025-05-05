@@ -203,10 +203,10 @@ module "route_table_aks" {
       address_prefix = var.vnet_address_spaces[1]
       next_hop_type  = "VnetLocal"
     }
-    "internet" = {
-      address_prefix = "0.0.0.0/0"
-      next_hop_type  = "Internet"
-    }
+    # "internet" = {
+    #   address_prefix = "0.0.0.0/0"
+    #   next_hop_type  = "Internet"
+    # }
 
   }
 

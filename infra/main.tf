@@ -41,12 +41,48 @@ data "azurerm_subnet" "endpoints_subnet" {
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
 
-# not required for now
+
 data "azurerm_subnet" "database_subnet" {
   name                 = "database-subnet"
   virtual_network_name = var.vnet_name
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
+
+######################## Linux VM Module #########################################
+
+module "vm_linux" {
+  source               = "../modules/vm"  # Path to the VM module
+  vm_name              = "linux-vm"
+  location             = "East US"
+  resource_group_name  = "my-resource-group"
+  vm_size              = "Standard_B1s"
+  admin_username       = "azureuser"
+  os_type              = "linux"  # Specify OS type as linux
+  use_existing_ssh_key = false  # Set to true if you want to use an existing key, false to generate new one
+  vm_version           = "latest"  # Specify the VM version
+  vm_sku               = "sku-name"  # Specify the VM SKU
+  vm_publisher         = "Canonical"  # Specify the VM publisher
+  vm_offer             = "UbuntuServer"  # Specify the VM offer
+  tags                 = { "environment" = "dev" }
+  subnet_id            = module.subnet_aks.subnet_id  # Reference to the subnet ID
+}
+
+######################## Linux VM Module #########################################
+# module "vm_windows" {
+#   source               = "../modules/vm"  # Path to the VM module
+#   vm_name              = "windows-vm"
+#   location             = "East US"
+#   resource_group_name  = "my-resource-group"
+#   vm_size              = "Standard_B1s"
+#   admin_username       = "azureuser"
+#   os_type              = "windows"  # Specify OS type as windows
+#   use_existing_ssh_key = false  # Set to true if you want to use an existing key, false to generate new one
+#   tags                 = { "environment" = "prod" }
+#   subnet_id            = module.subnet_aks.subnet_id  # Reference to the subnet ID
+# }
+
+
+
 
 ######################## AKS Module #########################################
 # Create user-assigned identity for AKS and AGIC
@@ -69,7 +105,6 @@ module "aks_private_dns_zone" {
   resource_group_name  = data.azurerm_resource_group.rg.name
   vnet_link_name       = var.vnet_link_name
   virtual_network_id   = data.azurerm_virtual_network.vnet.id
-  registration_enabled = false
   tags                 = var.tags
   depends_on           = [data.azurerm_virtual_network.vnet]
 }
@@ -114,99 +149,99 @@ module "aks_private_endpoint" {
 }
 #################################################################
 #################### POSTGRESQL Module ############################################
-module "postgesql_private_dns_zone" {
-  source = "../modules/private_dns_zone"
+# module "postgesql_private_dns_zone" {
+#   source = "../modules/private_dns_zone"
 
-  zone_name           = "privatelink.postgres.database.azure.com"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  vnet_link_name      = "postgresql-vnet-link"
-  tags                = var.tags
-  depends_on          = [data.azurerm_virtual_network.vnet]
-}
+#   zone_name           = "privatelink.postgres.database.azure.com"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   vnet_link_name      = "postgresql-vnet-link"
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
-module "postgresql" {
-  source = "../modules/postgresql"
+# module "postgresql" {
+#   source = "../modules/postgresql"
 
-  name                = var.postgresql_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  admin_username      = var.postgresql_admin_username
-  admin_password      = var.postgresql_admin_password # store in a secret manager in production
-  sku_name            = var.postgresql_sku_name
-  postgresql_version  = var.postgresql_version
-  storage_mb          = 32768
-  storage_tier        = var.storage_tier
-  zone                = "1"
-  # delegated_subnet_id   = data.azurerm_subnet.database_subnet.id
-  # private_dns_zone_id   = module.postgesql_private_dns_zone.id
-  backup_retention_days = var.postgresql_backup_retention_days
-  geo_redundant_backup  = false
-  enable_ha             = var.enable_ha
-  enable_azure_ad_auth  = var.enable_azure_ad_auth
-  tags                  = var.tags
+#   name                = var.postgresql_name
+#   location            = data.azurerm_resource_group.rg.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   admin_username      = var.postgresql_admin_username
+#   admin_password      = var.postgresql_admin_password # store in a secret manager in production
+#   sku_name            = var.postgresql_sku_name
+#   postgresql_version  = var.postgresql_version
+#   storage_mb          = 32768
+#   storage_tier        = var.storage_tier
+#   zone                = "1"
+#   # delegated_subnet_id   = data.azurerm_subnet.database_subnet.id
+#   # private_dns_zone_id   = module.postgesql_private_dns_zone.id
+#   backup_retention_days = var.postgresql_backup_retention_days
+#   geo_redundant_backup  = false
+#   enable_ha             = var.enable_ha
+#   enable_azure_ad_auth  = var.enable_azure_ad_auth
+#   tags                  = var.tags
 
-  depends_on = [module.postgesql_private_dns_zone]
-}
+#   depends_on = [module.postgesql_private_dns_zone]
+# }
 
-module "postgresql_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "postgresql_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "postgresql-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.postgresql.postgresql_server_id
-  subresource_names              = ["postgresqlServer"]
-  private_dns_zone_id            = module.postgesql_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.postgresql]
-}
+#   name                           = "postgresql-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.postgresql.postgresql_server_id
+#   subresource_names              = ["postgresqlServer"]
+#   private_dns_zone_id            = module.postgesql_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.postgresql]
+# }
 #########################################################################
 #################### Redis Module #######################################
-module "redis_private_dns_zone" {
-  source = "../modules/private_dns_zone"
+# module "redis_private_dns_zone" {
+#   source = "../modules/private_dns_zone"
 
-  zone_name           = "privatelink.redis.cache.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  vnet_link_name      = "redis-vnet-link"
-  tags                = var.tags
-  depends_on          = [data.azurerm_virtual_network.vnet]
-}
+#   zone_name           = "privatelink.redis.cache.windows.net"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   vnet_link_name      = "redis-vnet-link"
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
-module "redis" {
-  source              = "../modules/redis"
-  redis_name          = var.redis_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  sku_name            = var.redis_sku_name
-  family              = var.redis_family
-  capacity            = var.redis_capacity
-  redis_version       = var.redis_version
-  # subnet_id            = data.azurerm_subnet.endpoints_subnet.id
-  # private_static_ip_address = cidrhost(data.azurerm_subnet.endpoints_subnet.address_prefixes[0], 4)
-  # shard_count = var.redis_shard_count
-  # zones       = var.redis_zones
+# module "redis" {
+#   source              = "../modules/redis"
+#   redis_name          = var.redis_name
+#   location            = data.azurerm_resource_group.rg.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   sku_name            = var.redis_sku_name
+#   family              = var.redis_family
+#   capacity            = var.redis_capacity
+#   redis_version       = var.redis_version
+#   # subnet_id            = data.azurerm_subnet.endpoints_subnet.id
+#   # private_static_ip_address = cidrhost(data.azurerm_subnet.endpoints_subnet.address_prefixes[0], 4)
+#   # shard_count = var.redis_shard_count
+#   # zones       = var.redis_zones
 
 
-  tags       = var.tags
-  depends_on = [module.redis_private_dns_zone]
-}
+#   tags       = var.tags
+#   depends_on = [module.redis_private_dns_zone]
+# }
 
-module "redis_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "redis_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "redis-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.redis.redis_cache_id
-  subresource_names              = ["redisCache"]
-  private_dns_zone_id            = module.redis_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.redis]
-}
+#   name                           = "redis-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.redis.redis_cache_id
+#   subresource_names              = ["redisCache"]
+#   private_dns_zone_id            = module.redis_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.redis]
+# }
 #########################################################################
 #################### APIM Module ############################################
 # Create private DNS zone for APIM
@@ -277,56 +312,56 @@ module "redis_private_endpoint" {
 #########################################################################
 #################### Cosmos DB Module ###################################
 # Create Cosmos DB with MongoDB API
-module "cosmosdb_private_dns_zone" {
-  source = "../modules/private_dns_zone"
+# module "cosmosdb_private_dns_zone" {
+#   source = "../modules/private_dns_zone"
 
-  zone_name           = "privatelink.mongo.cosmos.azure.com"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  vnet_link_name      = "cosmosdb-vnet-link"
-  tags                = var.tags
-  depends_on          = [data.azurerm_virtual_network.vnet]
-}
+#   zone_name           = "privatelink.mongo.cosmos.azure.com"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   vnet_link_name      = "cosmosdb-vnet-link"
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
-module "cosmosdb" {
-  source = "../modules/cosmosdb_mongodb"
+# module "cosmosdb" {
+#   source = "../modules/cosmosdb_mongodb"
 
-  cosmosdb_name       = var.cosmosdb_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  offer_type          = var.offer_type
-  capabilities        = var.capabilities
-  geo_locations       = var.geo_locations
-  backup              = var.backup
-  identity_type       = var.identity_type
-  database_name       = var.database_name
-  # collection_name     = var.collection_name
-  shard_key         = var.shard_key
-  consistency_level = var.consistency_level
+#   cosmosdb_name       = var.cosmosdb_name
+#   location            = data.azurerm_resource_group.rg.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   offer_type          = var.offer_type
+#   capabilities        = var.capabilities
+#   geo_locations       = var.geo_locations
+#   backup              = var.backup
+#   identity_type       = var.identity_type
+#   database_name       = var.database_name
+#   # collection_name     = var.collection_name
+#   shard_key         = var.shard_key
+#   consistency_level = var.consistency_level
 
-  indexes = [
-    {
-      keys   = [var.shard_key]
-      unique = true
-    }
-  ]
+#   indexes = [
+#     {
+#       keys   = [var.shard_key]
+#       unique = true
+#     }
+#   ]
 
-  tags = var.tags
-}
+#   tags = var.tags
+# }
 
-module "cosmosdb_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "cosmosdb_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "cosmosdb-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.cosmosdb.cosmosdb_account_id
-  subresource_names              = ["MongoDB"]
-  private_dns_zone_id            = module.cosmosdb_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.cosmosdb, module.cosmosdb_private_dns_zone]
-}
+#   name                           = "cosmosdb-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.cosmosdb.cosmosdb_account_id
+#   subresource_names              = ["MongoDB"]
+#   private_dns_zone_id            = module.cosmosdb_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.cosmosdb, module.cosmosdb_private_dns_zone]
+# }
 
 
 #########################################################################

@@ -57,11 +57,11 @@ variable "subnet_id" {
   type        = string
 }
 
-# variable "enable_auto_scaling" {
-#   description = "Whether to enable auto-scaling"
-#   type        = bool
-#   default     = false
-# }
+variable "enable_auto_scaling" {
+  description = "Whether to enable auto-scaling"
+  type        = bool
+  default     = true
+}
 
 variable "min_count" {
   description = "Minimum nodes for auto-scaling"

@@ -1,4 +1,22 @@
 ######################## Common Variables #########################
+variable "subscription_id" {
+  description = "The Azure subscription ID"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "The Azure tenant ID"
+  type        = string
+}
+# variable "client_id" {
+#   description = "The Azure client ID"
+#   type        = string
+# }
+# variable "client_secret" {
+#   description = "The Azure client secret"
+#   type        = string
+# }
+
 variable "resource_group_name" {
   description = "The name of the resource group"
   type        = string
@@ -54,173 +72,174 @@ variable "aks_dns_service_ip" {
 }
 ######################### POSTGRESQL VARIABLES ######################
 
-variable "postgresql_admin_username" {
-  description = "The admin username for the postgresql server"
-  type        = string
-}
-
-variable "postgresql_admin_password" {
-  description = "The admin password for the postgresql server"
-  type        = string
-}
-
-variable "postgresql_name" {
-  description = "name of postgresql server"
-  type        = string
-}
-
-variable "postgresql_sku_name" {
-  description = "value of sku name"
-  type        = string
-}
-
-variable "postgresql_version" {
-  description = "version of postgresql"
-  type        = string
-}
-
-# variable "postgresql_ha_mode"{
-#   description = "ha mode of postgresql"
+# variable "postgresql_admin_username" {
+#   description = "The admin username for the postgresql server"
 #   type        = string
 # }
 
-variable "enable_ha" {
-  description = "enable_ha"
-  type        = bool
-}
+# variable "postgresql_admin_password" {
+#   description = "The admin password for the postgresql server"
+#   type        = string
+# }
 
-variable "enable_azure_ad_auth" {
-  description = "enable_azure_ad_auth"
-  type        = bool
-}
+# variable "postgresql_name" {
+#   description = "name of postgresql server"
+#   type        = string
+# }
 
-variable "postgresql_backup_retention_days" {
-  description = "postgresql_backup_retention_days"
-  type        = number
-}
+# variable "postgresql_sku_name" {
+#   description = "value of sku name"
+#   type        = string
+# }
 
-variable "storage_tier" {
-  description = "storage_tier"
-  type        = string
-}
+# variable "postgresql_version" {
+#   description = "version of postgresql"
+#   type        = string
+# }
+
+## variable "postgresql_ha_mode"{
+##   description = "ha mode of postgresql"
+##   type        = string
+## }
+
+# variable "enable_ha" {
+#   description = "enable_ha"
+#   type        = bool
+# }
+
+# variable "enable_azure_ad_auth" {
+#   description = "enable_azure_ad_auth"
+#   type        = bool
+# }
+
+# variable "postgresql_backup_retention_days" {
+#   description = "postgresql_backup_retention_days"
+#   type        = number
+# }
+
+# variable "storage_tier" {
+#   description = "storage_tier"
+#   type        = string
+# }
 
 ###################################################################
 ##################### REDIS VARIABLES ##############################
 
-variable "redis_name" {
-  description = "name of redis"
-  type        = string
-}
-
-variable "redis_sku_name" {
-  description = "sku name of redis"
-  type        = string
-}
-
-variable "redis_family" {
-  description = "family of redis"
-  type        = string
-}
-
-variable "redis_capacity" {
-  description = "capacity of redis"
-  type        = number
-}
-
-variable "redis_non_ssl_port_enabled" {
-  description = "non ssl port enabled of redis"
-  type        = bool
-}
-
-variable "redis_minimum_tls_version" {
-  description = "minimum tls version of redis"
-  type        = string
-}
-
-variable "redis_version" {
-  description = "version of redis"
-  type        = string
-}
-
-# variable "redis_shard_count" {
-#   description = "shard count of redis"
-#   type        = number
-# }
-
-# variable "redis_zones" {
-#   description = "zones of redis"
-#   type        = list(string)
-# }
-
-# variable "public_network_access_enabled" {
-#   description = "Whether to enable public network access"
-#   type        = bool
-# }
-
-################## cosmosdb variables##########################################
-variable "cosmosdb_name" {
-  description = "name of cosmosdb"
-  type        = string
-}
-
-variable "database_name" {
-  description = "name of database"
-  type        = string
-}
-
-variable "capabilities" {
-  description = "List of capabilities for the Cosmos DB account"
-  type        = list(string)
-  default     = []
-}
-
-# variable "collection_name" {
-#   description = "name of collection"
+# variable "redis_name" {
+#   description = "name of redis"
 #   type        = string
 # }
 
-variable "shard_key" {
-  description = "shard key"
-  type        = string
-}
+# variable "redis_sku_name" {
+#   description = "sku name of redis"
+#   type        = string
+# }
 
-variable "offer_type" {
-  description = "offer type"
-  type        = string
-}
+# variable "redis_family" {
+#   description = "family of redis"
+#   type        = string
+# }
 
-variable "consistency_level" {
-  description = "consistency level"
-  type        = string
-}
+# variable "redis_capacity" {
+#   description = "capacity of redis"
+#   type        = number
+# }
 
-variable "cosmosdb_kind" {
-  description = "kind of cosmosdb"
-  type        = string
-}
+# variable "redis_non_ssl_port_enabled" {
+#   description = "non ssl port enabled of redis"
+#   type        = bool
+# }
 
-variable "geo_locations" {
-  description = "geo locations"
-  type = list(object({
-    location          = string
-    failover_priority = number
-  }))
-}
+# variable "redis_minimum_tls_version" {
+#   description = "minimum tls version of redis"
+#   type        = string
+# }
 
-variable "backup" {
-  description = "backup"
-  type = object({
-    type                = string
-    interval_in_minutes = number
-    retention_in_hours  = number
-  })
-}
+# variable "redis_version" {
+#   description = "version of redis"
+#   type        = string
+# }
 
-variable "identity_type" {
-  description = "identity type"
-  type        = string
-}
+## variable "redis_shard_count" {
+##   description = "shard count of redis"
+##   type        = number
+## }
+#
+## variable "redis_zones" {
+##   description = "zones of redis"
+##   type        = list(string)
+## }
+#
+## variable "public_network_access_enabled" {
+##   description = "Whether to enable public network access"
+##   type        = bool
+## }
 
+################## cosmosdb variables##########################################
+# variable "cosmosdb_name" {
+#   description = "name of cosmosdb"
+#   type        = string
+# }
+
+# variable "database_name" {
+#   description = "name of database"
+#   type        = string
+# }
+
+# variable "capabilities" {
+#   description = "List of capabilities for the Cosmos DB account"
+#   type        = list(string)
+#   default     = []
+# }
+
+
+
+# variable "shard_key" {
+#   description = "shard key"
+#   type        = string
+# }
+
+# variable "offer_type" {
+#   description = "offer type"
+#   type        = string
+# }
+
+# variable "consistency_level" {
+#   description = "consistency level"
+#   type        = string
+# }
+
+# variable "cosmosdb_kind" {
+#   description = "kind of cosmosdb"
+#   type        = string
+# }
+
+# variable "geo_locations" {
+#   description = "geo locations"
+#   type = list(object({
+#     location          = string
+#     failover_priority = number
+#   }))
+# }
+
+# variable "backup" {
+#   description = "backup"
+#   type = object({
+#     type                = string
+#     interval_in_minutes = number
+#     retention_in_hours  = number
+#   })
+# }
+
+# variable "identity_type" {
+#   description = "identity type"
+#   type        = string
+# }
+
+## variable "collection_name" {
+##   description = "name of collection"
+##   type        = string
+## }
 
 ##############################################################
 
