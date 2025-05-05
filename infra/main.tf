@@ -50,22 +50,22 @@ data "azurerm_subnet" "database_subnet" {
 
 ######################## Linux VM Module #########################################
 
-module "vm_linux" {
-  source               = "../modules/vm" # Path to the VM module
-  vm_name              = "linux-vm"
-  location             = "East US"
-  resource_group_name  = "my-resource-group"
-  vm_size              = "Standard_B1s"
-  admin_username       = "azureuser"
-  os_type              = "linux"        # Specify OS type as linux
-  use_existing_ssh_key = false          # Set to true if you want to use an existing key, false to generate new one
-  vm_version           = "latest"       # Specify the VM version
-  vm_sku               = "sku-name"     # Specify the VM SKU
-  vm_publisher         = "Canonical"    # Specify the VM publisher
-  vm_offer             = "UbuntuServer" # Specify the VM offer
-  tags                 = var.tags
-  subnet_id            = module.subnet_aks.subnet_id # Reference to the subnet ID
-}
+# module "vm_linux" {
+#   source               = "../modules/vm" # Path to the VM module
+#   vm_name              = "linux-vm"
+#   location             = "East US"
+#   resource_group_name  = "my-resource-group"
+#   vm_size              = "Standard_B1s"
+#   admin_username       = "azureuser"
+#   os_type              = "linux"        # Specify OS type as linux
+#   use_existing_ssh_key = false          # Set to true if you want to use an existing key, false to generate new one
+#   vm_version           = "latest"       # Specify the VM version
+#   vm_sku               = "sku-name"     # Specify the VM SKU
+#   vm_publisher         = "Canonical"    # Specify the VM publisher
+#   vm_offer             = "UbuntuServer" # Specify the VM offer
+#   tags                 = var.tags
+#   subnet_id            = module.subnet_aks.subnet_id # Reference to the subnet ID
+# }
 
 ######################## Windows VM Module #########################################
 # module "vm_windows" {
