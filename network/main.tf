@@ -138,39 +138,39 @@ module "nsg_database" {
 }
 
 #### AKS  ####
-# resource "azurerm_public_ip" "nat_ip" {
-#   name                = "${var.aks_cluster_name}-nat-ip"
-#   location            = var.location
-#   resource_group_name = module.resource_group.resource_group_name
-#   allocation_method   = "Static"
-#   sku                 = "Standard"
+resource "azurerm_public_ip" "aks_nat_ip" {
+  name                = "${var.aks_cluster_name}-nat-ip"
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
 
-# resource "azurerm_nat_gateway" "nat_gw" {
+resource "azurerm_nat_gateway" "aks_nat_gw" {
 
-#   name                = "${var.aks_cluster_name}-nat-gw"
-#   location            = var.location
-#   resource_group_name = var.resource_group_name
-#   sku_name            = "Standard"
+  name                = "${var.aks_cluster_name}-nat-gw"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku_name            = "Standard"
 
-#   tags = var.tags
+  tags = var.tags
 
-#   # depends_on = [azurerm_public_ip.nat_ip]
-# }
+  # depends_on = [azurerm_public_ip.nat_ip]
+}
 
-# resource "azurerm_nat_gateway_public_ip_association" "nat_gateway_pip_assoc" {
-#   nat_gateway_id       = azurerm_nat_gateway.nat_gw.id
-#   public_ip_address_id = azurerm_public_ip.nat_ip.id
-#   depends_on = [ azurerm_nat_gateway.nat_gw, azurerm_public_ip.nat_ip ]
-# }
+resource "azurerm_nat_gateway_public_ip_association" "nat_gateway_pip_assoc" {
+  nat_gateway_id       = azurerm_nat_gateway.aks_nat_gw.id
+  public_ip_address_id = azurerm_public_ip.aks_nat_ip.id
+  depends_on           = [azurerm_nat_gateway.aks_nat_gw, azurerm_public_ip.aks_nat_ip]
+}
 
-# resource "azurerm_subnet_nat_gateway_association" "aks_nat_assoc" {
-#   subnet_id      = module.subnet_aks.subnet_id
-#   nat_gateway_id = azurerm_nat_gateway.nat_gw.id
-#   depends_on = [ azurerm_nat_gateway.nat_gw, module.subnet_aks ]
-# }
+resource "azurerm_subnet_nat_gateway_association" "aks_nat_assoc" {
+  subnet_id      = module.subnet_aks.subnet_id
+  nat_gateway_id = azurerm_nat_gateway.aks_nat_gw.id
+  depends_on     = [azurerm_nat_gateway.aks_nat_gw, module.subnet_aks]
+}
 
 
 module "nsg_aks" {
@@ -203,10 +203,10 @@ module "route_table_aks" {
       address_prefix = var.vnet_address_spaces[1]
       next_hop_type  = "VnetLocal"
     }
-    # "internet" = {
-    #   address_prefix = "0.0.0.0/0"
-    #   next_hop_type  = "Internet"
-    # }
+    "internet" = {
+      address_prefix = "0.0.0.0/0"
+      next_hop_type  = "Internet"
+    }
 
   }
 

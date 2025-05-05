@@ -17,11 +17,11 @@ data "azurerm_virtual_network" "vnet" {
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
-# data "azurerm_subnet" "aks_subnet" {
-#   name                 = var.aks_subnet_name
-#   virtual_network_name = var.vnet_name
-#   resource_group_name  = data.azurerm_resource_group.rg.name
-# }
+data "azurerm_subnet" "aks_subnet" {
+  name                 = var.aks_subnet_name
+  virtual_network_name = var.vnet_name
+  resource_group_name  = data.azurerm_resource_group.rg.name
+}
 
 # data "azurerm_subnet" "apim_subnet" {
 #   name                 = "apim-subnet"
@@ -63,62 +63,59 @@ data "azurerm_subnet" "database_subnet" {
 # }
 
 # Create private DNS zone for AKS
-# module "aks_private_dns_zone" {
-#   source              = "../modules/private_dns_zone"
-#   zone_name           = "privatelink.${replace(var.location, " ","")}.azmk8s.io"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   vnet_link_name      = var.vnet_link_name
-#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
-#   registration_enabled = false
-#   tags = var.tags
-#   depends_on = [ data.azurerm_virtual_network.vnet ]
-# }
+module "aks_private_dns_zone" {
+  source               = "../modules/private_dns_zone"
+  zone_name            = "privatelink.${replace(var.location, " ", "")}.azmk8s.io"
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  vnet_link_name       = var.vnet_link_name
+  virtual_network_id   = data.azurerm_virtual_network.vnet.id
+  registration_enabled = false
+  tags                 = var.tags
+  depends_on           = [data.azurerm_virtual_network.vnet]
+}
 
 
 # # Create AKS cluster in private mode
-# module "aks" {
-#   source = "../modules/aks"
+module "aks" {
+  source = "../modules/aks"
 
-#   cluster_name                = var.aks_cluster_name
-#   location                    = var.location
-#   resource_group_name         = data.azurerm_resource_group.rg.name
-#   dns_prefix                 = "dev-aks"
-#   kubernetes_version         = var.aks_kubernetes_version
-#   # private_dns_zone_id        = module.aks_private_dns_zone.id
-#   subnet_id                  = data.azurerm_subnet.aks_subnet.id
-#   # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
+  cluster_name        = var.aks_cluster_name
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  kubernetes_version  = var.aks_kubernetes_version
+  # private_dns_zone_id        = module.aks_private_dns_zone.id
+  system_subnet_id = data.azurerm_subnet.aks_subnet.id
+  # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
 
-#   default_node_pool_name     = "default"
-#   default_node_pool_node_count = 1
-#   default_node_pool_vm_size  = "Standard_D2s_v3"
-#   default_node_pool_os_disk_size_gb = 30
+  default_node_pool_name = "systempool"
 
-#   enable_auto_scaling        = true
-#   min_count                 = 1
-#   max_count                 = 3
-#   max_pods                  = 30
+  # enable_auto_scaling   = true
+  system_node_min_count = 1
+  system_node_max_count = 3
+  node_pool_max_pods    = 30
 
-#   service_cidr              = var.aks_service_cidr
-#   dns_service_ip            = var.aks_dns_service_ip
+  node_pool_os_disk_size_gb = 30
+  # service_cidr              = var.aks_service_cidr
+  # dns_service_ip            = var.aks_dns_service_ip
 
-#   tags = var.tags
+  tags = var.tags
 
-#   depends_on = [module.aks_private_dns_zone]
-# }
+  depends_on = [module.aks_private_dns_zone]
+}
 
-# module "aks_private_endpoint" {
-#   source = "../modules/private_endpoint"
+module "aks_private_endpoint" {
+  source = "../modules/private_endpoint"
 
-#   name                           = "aks-private-endpoint"
-#   location                       = data.azurerm_resource_group.rg.location
-#   resource_group_name            = data.azurerm_resource_group.rg.name
-#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-#   private_connection_resource_id = module.aks.cluster_id
-#   subresource_names              = ["management"]
-#   private_dns_zone_id            = module.aks_private_dns_zone.id
-#   tags                           = var.tags
-#   depends_on                     = [module.aks, module.aks_private_dns_zone]
-# }
+  name                           = "aks-private-endpoint"
+  location                       = data.azurerm_resource_group.rg.location
+  resource_group_name            = data.azurerm_resource_group.rg.name
+  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+  private_connection_resource_id = module.aks.aks_id
+  subresource_names              = ["management"]
+  private_dns_zone_id            = module.aks_private_dns_zone.id
+  tags                           = var.tags
+  depends_on                     = [module.aks, module.aks_private_dns_zone]
+}
 #################################################################
 #################### POSTGRESQL Module ############################################
 module "postgesql_private_dns_zone" {
@@ -183,14 +180,14 @@ module "redis_private_dns_zone" {
 }
 
 module "redis" {
-  source               = "../modules/redis"
-  redis_name           = var.redis_name
-  location             = data.azurerm_resource_group.rg.location
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  sku_name             = var.redis_sku_name
-  family               = var.redis_family
-  capacity             = var.redis_capacity
-  redis_version        = var.redis_version
+  source              = "../modules/redis"
+  redis_name          = var.redis_name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  sku_name            = var.redis_sku_name
+  family              = var.redis_family
+  capacity            = var.redis_capacity
+  redis_version       = var.redis_version
   # subnet_id            = data.azurerm_subnet.endpoints_subnet.id
   # private_static_ip_address = cidrhost(data.azurerm_subnet.endpoints_subnet.address_prefixes[0], 4)
   # shard_count = var.redis_shard_count
@@ -296,19 +293,19 @@ module "cosmosdb_private_dns_zone" {
 }
 
 module "cosmosdb" {
-  source = "../modules/cosmosdb"
+  source = "../modules/cosmosdb_mongodb"
 
-  cosmosdb_name = var.cosmosdb_name
+  cosmosdb_name       = var.cosmosdb_name
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  offer_type = var.offer_type
-  capabilities = var.capabilities
-  geo_locations = var.geo_locations
-  backup = var.backup
-  identity_type = var.identity_type
+  offer_type          = var.offer_type
+  capabilities        = var.capabilities
+  geo_locations       = var.geo_locations
+  backup              = var.backup
+  identity_type       = var.identity_type
   database_name       = var.database_name
   # collection_name     = var.collection_name
-  shard_key          = var.shard_key
+  shard_key         = var.shard_key
   consistency_level = var.consistency_level
 
   indexes = [

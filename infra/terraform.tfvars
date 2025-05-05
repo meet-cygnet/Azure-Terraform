@@ -3,10 +3,10 @@ tags = {
   Environment = "Development"
   ManagedBy   = "Terraform"
 }
-resource_group_name    = "TEST-RG-Prod"
-location               = "centralindia"
-vnet_name              = "VNet-Prod"
-environment            = "Development"
+resource_group_name = "TEST-RG-Prod"
+location            = "centralindia"
+vnet_name           = "VNet-Prod"
+environment         = "Development"
 
 ############### AKS VARIABLES ###############
 # vnet_link_name         = "aks-vnet-link"
@@ -46,12 +46,12 @@ redis_version              = "6"
 cosmosdb_name = "abc-cosmosdb-dev"
 database_name = "dev-db"
 backup = {
-  type                 = "Periodic"
-  interval_in_minutes  = 60
-  retention_in_hours   = 24
+  type                = "Periodic"
+  interval_in_minutes = 60
+  retention_in_hours  = 24
 }
 consistency_level = "Session"
-cosmosdb_kind = "Mongo"
+cosmosdb_kind     = "Mongo"
 geo_locations = [
   {
     location          = "Central India"
@@ -63,8 +63,8 @@ geo_locations = [
   }
 ]
 identity_type = "SystemAssigned"
-offer_type = "Standard"
-shard_key = "shardKey"
+offer_type    = "Standard"
+shard_key     = "shardKey"
 
 
 ######################################################

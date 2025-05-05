@@ -24,34 +24,34 @@ variable "tags" {
   type        = map(string)
 }
 ######################## AKS VARIABLES #########################################
-# variable "vnet_link_name" {
-#   description = "The name of the Virtual Network Link for the AKS private DNS zone"
-#   type        = string
-# }
+variable "vnet_link_name" {
+  description = "The name of the Virtual Network Link for the AKS private DNS zone"
+  type        = string
+}
 
-# variable "aks_subnet_name" {
-#   description = "aks subnet"
-#   type        = string
-# }
-# variable "aks_cluster_name" {
-#   description = "Name of the AKS cluster"
-#   type        = string
-# }
+variable "aks_subnet_name" {
+  description = "aks subnet"
+  type        = string
+}
+variable "aks_cluster_name" {
+  description = "Name of the AKS cluster"
+  type        = string
+}
 
-# variable "aks_kubernetes_version" {
-#   description = "Version of Kubernetes for AKS cluster"
-#   type        = string
-# }
+variable "aks_kubernetes_version" {
+  description = "Version of Kubernetes for AKS cluster"
+  type        = string
+}
 
-# variable "aks_service_cidr" {
-#   description = "Network range for Kubernetes service in AKS cluster. Should be a subset of the address space."
-#   type        = string
-# }
+variable "aks_service_cidr" {
+  description = "Network range for Kubernetes service in AKS cluster. Should be a subset of the address space."
+  type        = string
+}
 
-# variable "aks_dns_service_ip" {
-#   description = "IP for cluster service discovery in AKS cluster. Should be within the service CIDR range."
-#   type        = string
-# }
+variable "aks_dns_service_ip" {
+  description = "IP for cluster service discovery in AKS cluster. Should be within the service CIDR range."
+  type        = string
+}
 ######################### POSTGRESQL VARIABLES ######################
 
 variable "postgresql_admin_username" {
@@ -210,9 +210,9 @@ variable "geo_locations" {
 variable "backup" {
   description = "backup"
   type = object({
-    type                  = string
-    interval_in_minutes   = number
-    retention_in_hours    = number
+    type                = string
+    interval_in_minutes = number
+    retention_in_hours  = number
   })
 }
 
