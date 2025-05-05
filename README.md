@@ -1,1 +1,1 @@
-# Azuer-Terraform
+# Azure-Terraform
