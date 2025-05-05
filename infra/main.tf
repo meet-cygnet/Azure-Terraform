@@ -84,19 +84,15 @@ module "aks" {
   resource_group_name = data.azurerm_resource_group.rg.name
   kubernetes_version  = var.aks_kubernetes_version
   # private_dns_zone_id        = module.aks_private_dns_zone.id
-  system_subnet_id = data.azurerm_subnet.aks_subnet.id
+  subnet_id = data.azurerm_subnet.aks_subnet.id
   # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
 
   default_node_pool_name = "systempool"
 
   # enable_auto_scaling   = true
-  system_node_min_count = 1
-  system_node_max_count = 3
-  node_pool_max_pods    = 30
-
-  node_pool_os_disk_size_gb = 30
-  # service_cidr              = var.aks_service_cidr
-  # dns_service_ip            = var.aks_dns_service_ip
+  min_count = 1
+  max_count = 3
+  max_pods  = 30
 
   tags = var.tags
 
@@ -110,7 +106,7 @@ module "aks_private_endpoint" {
   location                       = data.azurerm_resource_group.rg.location
   resource_group_name            = data.azurerm_resource_group.rg.name
   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.aks.aks_id
+  private_connection_resource_id = module.aks.cluster_id
   subresource_names              = ["management"]
   private_dns_zone_id            = module.aks_private_dns_zone.id
   tags                           = var.tags

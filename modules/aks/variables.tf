@@ -13,10 +13,10 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "dns_prefix" {
-  description = "DNS prefix for the managed cluster"
-  type        = string
-}
+# variable "dns_prefix" {
+#   description = "DNS prefix for the managed cluster"
+#   type        = string
+# }
 
 variable "kubernetes_version" {
   description = "Version of Kubernetes"
@@ -57,11 +57,11 @@ variable "subnet_id" {
   type        = string
 }
 
-variable "enable_auto_scaling" {
-  description = "Whether to enable auto-scaling"
-  type        = bool
-  default     = false
-}
+# variable "enable_auto_scaling" {
+#   description = "Whether to enable auto-scaling"
+#   type        = bool
+#   default     = false
+# }
 
 variable "min_count" {
   description = "Minimum nodes for auto-scaling"
