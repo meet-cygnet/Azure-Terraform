@@ -17,11 +17,11 @@ data "azurerm_virtual_network" "vnet" {
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
-data "azurerm_subnet" "aks_subnet" {
-  name                 = var.aks_subnet_name
-  virtual_network_name = var.vnet_name
-  resource_group_name  = data.azurerm_resource_group.rg.name
-}
+# data "azurerm_subnet" "aks_subnet" {
+#   name                 = var.aks_subnet_name
+#   virtual_network_name = var.vnet_name
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+# }
 
 # data "azurerm_subnet" "apim_subnet" {
 #   name                 = "apim-subnet"
@@ -100,54 +100,54 @@ data "azurerm_subnet" "database_subnet" {
 # }
 
 # Create private DNS zone for AKS
-module "aks_private_dns_zone" {
-  source              = "../modules/private_dns_zone"
-  zone_name           = "privatelink.${replace(var.location, " ", "")}.azmk8s.io"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  vnet_link_name      = var.vnet_link_name
-  virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  tags                = var.tags
-  depends_on          = [data.azurerm_virtual_network.vnet]
-}
+# module "aks_private_dns_zone" {
+#   source              = "../modules/private_dns_zone"
+#   zone_name           = "privatelink.${replace(var.location, " ", "")}.azmk8s.io"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   vnet_link_name      = var.vnet_link_name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
 
 # # Create AKS cluster in private mode
-module "aks" {
-  source = "../modules/aks"
+# module "aks" {
+#   source = "../modules/aks"
 
-  cluster_name        = var.aks_cluster_name
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  kubernetes_version  = var.aks_kubernetes_version
-  # private_dns_zone_id        = module.aks_private_dns_zone.id
-  subnet_id = data.azurerm_subnet.aks_subnet.id
-  # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
+#   cluster_name        = var.aks_cluster_name
+#   location            = var.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   kubernetes_version  = var.aks_kubernetes_version
+#   # private_dns_zone_id        = module.aks_private_dns_zone.id
+#   subnet_id = data.azurerm_subnet.aks_subnet.id
+#   # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
 
-  default_node_pool_name = "systempool"
+#   default_node_pool_name = "systempool"
 
-  # enable_auto_scaling   = true
-  min_count = 1
-  max_count = 3
-  max_pods  = 30
+#   # enable_auto_scaling   = true
+#   min_count = 1
+#   max_count = 3
+#   max_pods  = 30
 
-  tags = var.tags
+#   tags = var.tags
 
-  depends_on = [module.aks_private_dns_zone]
-}
+#   depends_on = [module.aks_private_dns_zone]
+# }
 
-module "aks_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "aks_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "aks-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.aks.cluster_id
-  subresource_names              = ["management"]
-  private_dns_zone_id            = module.aks_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.aks, module.aks_private_dns_zone]
-}
+#   name                           = "aks-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.aks.cluster_id
+#   subresource_names              = ["management"]
+#   private_dns_zone_id            = module.aks_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.aks, module.aks_private_dns_zone]
+# }
 
 #################### POSTGRESQL Module ############################################
 # module "postgesql_private_dns_zone" {
@@ -364,3 +364,38 @@ module "aks_private_endpoint" {
 #   depends_on                     = [module.cosmosdb, module.cosmosdb_private_dns_zone]
 # }
 
+#########################################################################
+#################### Storage Account Module ############################################
+module "storage_account_private_dns_zone" {
+  source               = "../modules/private_dns_zone"
+  zone_name            = "privatelink.blob.core.windows.net"
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  vnet_link_name       = "storage-account-vnet-link"
+  virtual_network_id   = data.azurerm_virtual_network.vnet.id
+  tags                 = var.tags
+  depends_on           = [data.azurerm_virtual_network.vnet]
+}
+
+module "storage_account" {
+  source                 = "../modules/storage_account"
+  name                   = var.storage_account_name
+  resource_group_name    = data.azurerm_resource_group.rg.name
+  location               = data.azurerm_resource_group.rg.location
+  account_tier           = "Standard"
+  account_replication_type = "LRS"
+  tags = var.tags
+}
+
+module "storage_account_private_endpoint" {
+  source = "../modules/private_endpoint"
+
+  name                           = "storage-account-private-endpoint"
+  location                       = data.azurerm_resource_group.rg.location
+  resource_group_name            = data.azurerm_resource_group.rg.name
+  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+  private_connection_resource_id = module.storage_account.storage_account_id
+  subresource_names              = ["blob"]
+  private_dns_zone_id            = module.storage_account_private_dns_zone.id
+  tags                           = var.tags
+  depends_on                     = [module.storage_account, module.storage_account_private_dns_zone]
+}

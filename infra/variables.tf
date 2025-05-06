@@ -42,34 +42,34 @@ variable "tags" {
   type        = map(string)
 }
 ######################## AKS VARIABLES #########################################
-variable "vnet_link_name" {
-  description = "The name of the Virtual Network Link for the AKS private DNS zone"
-  type        = string
-}
+# variable "vnet_link_name" {
+#   description = "The name of the Virtual Network Link for the AKS private DNS zone"
+#   type        = string
+# }
 
-variable "aks_subnet_name" {
-  description = "aks subnet"
-  type        = string
-}
-variable "aks_cluster_name" {
-  description = "Name of the AKS cluster"
-  type        = string
-}
+# variable "aks_subnet_name" {
+#   description = "aks subnet"
+#   type        = string
+# }
+# variable "aks_cluster_name" {
+#   description = "Name of the AKS cluster"
+#   type        = string
+# }
 
-variable "aks_kubernetes_version" {
-  description = "Version of Kubernetes for AKS cluster"
-  type        = string
-}
+# variable "aks_kubernetes_version" {
+#   description = "Version of Kubernetes for AKS cluster"
+#   type        = string
+# }
 
-variable "aks_service_cidr" {
-  description = "Network range for Kubernetes service in AKS cluster. Should be a subset of the address space."
-  type        = string
-}
+# variable "aks_service_cidr" {
+#   description = "Network range for Kubernetes service in AKS cluster. Should be a subset of the address space."
+#   type        = string
+# }
 
-variable "aks_dns_service_ip" {
-  description = "IP for cluster service discovery in AKS cluster. Should be within the service CIDR range."
-  type        = string
-}
+# variable "aks_dns_service_ip" {
+#   description = "IP for cluster service discovery in AKS cluster. Should be within the service CIDR range."
+#   type        = string
+# }
 ######################### POSTGRESQL VARIABLES ######################
 
 # variable "postgresql_admin_username" {
@@ -192,8 +192,6 @@ variable "aks_dns_service_ip" {
 #   default     = []
 # }
 
-
-
 # variable "shard_key" {
 #   description = "shard key"
 #   type        = string
@@ -242,7 +240,14 @@ variable "aks_dns_service_ip" {
 ## }
 
 ##############################################################
+######################## Storage Account Variables ###########
+variable "storage_account_name" {
+  description = "The name of the storage account"
+  type        = string
+  
+}
 
+###############################################################
 # variable "address_space" {
 #   description = "The address space for the virtual network"
 #   type        = list(string)
@@ -350,3 +355,4 @@ variable "aks_dns_service_ip" {
 #     }
 #   ]
 # }
+
