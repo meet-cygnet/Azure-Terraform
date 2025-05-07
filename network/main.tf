@@ -92,7 +92,7 @@ module "nsg_apim" {
   subnet_id           = module.subnet_apim.subnet_id
   tags                = var.tags
 
-  depends_on = [module.vnet, module.subnet_apim]
+  depends_on = [module.subnet_apim]
 }
 
 module "nsg_agic" {
@@ -103,7 +103,7 @@ module "nsg_agic" {
   subnet_id           = module.subnet_agic.subnet_id
   tags                = var.tags
 
-  depends_on = [module.vnet, module.subnet_agic]
+  depends_on = [module.subnet_agic]
 }
 
 module "nsg_endpoints" {
@@ -114,7 +114,7 @@ module "nsg_endpoints" {
   subnet_id           = module.subnet_endpoints.subnet_id
   tags                = var.tags
 
-  depends_on = [module.vnet, module.subnet_endpoints]
+  depends_on = [module.subnet_endpoints]
 }
 
 module "nsg_vm" {
@@ -125,7 +125,7 @@ module "nsg_vm" {
   subnet_id           = module.subnet_vm.subnet_id
   tags                = var.tags
 
-  depends_on = [module.vnet, module.subnet_vm]
+  depends_on = [module.subnet_vm]
 }
 
 module "nsg_database" {
@@ -136,18 +136,31 @@ module "nsg_database" {
   subnet_id           = module.subnet_database.subnet_id
   tags                = var.tags
 
-  depends_on = [module.vnet, module.subnet_database]
+  depends_on = [module.subnet_database]
 }
 
 ####################### AKS Network Configuration #######################
-resource "azurerm_public_ip" "aks_nat_ip" {
-  name                = "${var.aks_cluster_name}-nat-ip"
-  location            = var.location
+
+module "nsg_aks" {
+  source              = "../modules/nsg"
+  nsg_name            = "aks-nsg"
   resource_group_name = module.resource_group.resource_group_name
-  allocation_method   = "Static"
-  sku                 = "Standard"
+  location            = var.location
+  subnet_id           = module.subnet_aks.subnet_id
+  tags                = var.tags
+
+  depends_on = [module.vnet, module.subnet_aks]
 }
+
+# resource "azurerm_public_ip" "aks_nat_ip" {
+#   name                = "${var.aks_cluster_name}-nat-ip"
+#   location            = var.location
+#   resource_group_name = module.resource_group.resource_group_name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+
 #   tags = var.tags
+#   depends_on = [module.vnet]
 # }
 
 # resource "azurerm_nat_gateway" "aks_nat_gw" {
@@ -173,18 +186,6 @@ resource "azurerm_public_ip" "aks_nat_ip" {
 #   nat_gateway_id = azurerm_nat_gateway.aks_nat_gw.id
 #   depends_on     = [azurerm_nat_gateway.aks_nat_gw, module.subnet_aks]
 # }
-
-
-module "nsg_aks" {
-  source              = "../modules/nsg"
-  nsg_name            = "aks-nsg"
-  resource_group_name = module.resource_group.resource_group_name
-  location            = var.location
-  subnet_id           = module.subnet_aks.subnet_id
-  tags                = var.tags
-
-  depends_on = [module.vnet, module.subnet_aks]
-}
 
 # Route table for AKS subnet
 # module "route_table_aks" {
