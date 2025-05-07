@@ -1,32 +1,12 @@
 terraform {
+  required_version = ">= 1.3.0"
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 4.27.0"
-    }
-    helm = {
-      source  = "hashicorp/helm"
-      version = "~> 2.15.0"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "~> 2.36.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.7.0"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 3.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.5.0"
+      version = "~> 3.90" # or latest stable you prefer
     }
   }
-
-  required_version = "~> 1.11.0"
 }
 
 provider "azurerm" {
@@ -37,23 +17,4 @@ provider "azurerm" {
   }
   subscription_id = var.subscription_id
   tenant_id       = var.tenant_id
-  # client_id       = var.client_id
-  # client_secret   = var.client_secret
 }
-
-# provider "helm" {
-#   kubernetes {
-#     host                   = module.aks.kube_config.0.host
-#     client_certificate     = base64decode(module.aks.kube_config.0.client_certificate)
-#     client_key             = base64decode(module.aks.kube_config.0.client_key)
-#     cluster_ca_certificate = base64decode(module.aks.kube_config.0.cluster_ca_certificate)
-#   }
-# }
-
-# provider "kubernetes" {
-#   host                   = module.aks.kube_config.0.host
-#   client_certificate     = base64decode(module.aks.kube_config.0.client_certificate)
-#   client_key             = base64decode(module.aks.kube_config.0.client_key)
-#   cluster_ca_certificate = base64decode(module.aks.kube_config.0.cluster_ca_certificate)
-#   # config_path            = "~/.kube/config"
-# }

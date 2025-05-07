@@ -24,8 +24,8 @@ module "subnet_apim" {
   resource_group_name     = module.resource_group.resource_group_name
   virtual_network_name    = module.vnet.vnet_name
   subnet_address_prefix   = var.subnet_prefixes["apim"]
-  enable_delegation       = true
-  delegation_service_name = "Microsoft.ApiManagement/service"
+  # enable_delegation       = true
+  # delegation_service_name = "Microsoft.ApiManagement/service"
 
   depends_on = [module.vnet]
 }
