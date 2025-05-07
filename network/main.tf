@@ -146,7 +146,7 @@ resource "azurerm_public_ip" "aks_nat_ip" {
   resource_group_name = module.resource_group.resource_group_name
   allocation_method   = "Static"
   sku                 = "Standard"
-
+}
 #   tags = var.tags
 # }
 
@@ -212,8 +212,8 @@ module "nsg_aks" {
 
 #   }
 
-  depends_on = [module.subnet_aks]
-}
+#   depends_on = [module.subnet_aks]
+# }
 #####################################################################
 # Route table for endpoints subnet
 # module "route_table_endpoints" {
