@@ -50,6 +50,7 @@ module "subnet_endpoints" {
   depends_on = [module.vnet]
 }
 
+#####
 module "subnet_vm" {
   source                = "../modules/subnet"
   subnet_name           = "vm-subnet"
@@ -59,6 +60,24 @@ module "subnet_vm" {
 
   depends_on = [module.vnet]
 }
+
+# resource "azurerm_public_ip" "vm_public_ip" {
+#   name                = "${var.aks_cluster_name}-nat-ip"
+#   location            = var.location
+#   resource_group_name = module.resource_group.resource_group_name
+#   allocation_method   = "Static"
+#   sku                 = "Standard"
+
+#   tags = var.tags
+#   depends_on = [module.vnet]
+# }
+
+# resource "azurerm_subnet_nat_gateway_association" "vm_nat_assoc" {
+#   subnet_id      = module.subnet_vm.subnet_id
+#   nat_gateway_id = azurerm_nat_gateway.aks_nat_gw.id
+#   depends_on     = [azurerm_nat_gateway.aks_nat_gw, module.subnet_aks]
+# }
+######
 
 module "subnet_aks" {
   source                = "../modules/subnet"

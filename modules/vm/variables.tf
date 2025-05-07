@@ -76,3 +76,18 @@ variable "existing_ssh_public_key" {
   type        = string
   default     = ""
 }
+
+### for the public IP address
+
+variable "enable_public_ip" {
+  description = "Whether to create and assign a public IP address"
+  type        = bool
+  default     = false
+}
+
+variable "public_ip" {
+  description = "Optional existing public IP to assign"
+  type        = string
+  default     = null
+}
+

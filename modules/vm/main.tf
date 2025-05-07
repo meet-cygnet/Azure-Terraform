@@ -13,6 +13,11 @@ resource "azurerm_network_interface" "nic" {
     name                          = "internal"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = "Dynamic"
+
+    # Conditional assignment using a ternary with a safe fallback
+    public_ip_address_id = var.enable_public_ip ? (
+      var.public_ip != null ? var.public_ip : azurerm_public_ip.pip
+    ) : null
   }
 
   tags = var.tags
@@ -69,4 +74,17 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   tags = var.tags
+}
+
+
+### public ip
+
+resource "azurerm_public_ip" "pip" {
+  count               = var.enable_public_ip && var.public_ip == null ? 1 : 0
+  name                = "${var.vm_name}-pip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+  tags                = var.tags
 }
