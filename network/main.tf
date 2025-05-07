@@ -1,3 +1,4 @@
+####################### Common Resource ####################
 module "resource_group" {
   source              = "../modules/resource_group"
   resource_group_name = var.resource_group_name
@@ -16,7 +17,7 @@ module "vnet" {
   depends_on = [module.resource_group]
 }
 
-# Subnets in first address space (10.0.0.0/16)
+###################### SUBNETS #######################
 module "subnet_apim" {
   source                = "../modules/subnet"
   subnet_name           = "apim-subnet"
@@ -81,7 +82,7 @@ module "subnet_database" {
   depends_on = [module.vnet]
 }
 
-# Network Security Groups
+###################### Network Security Groups #######################
 module "nsg_apim" {
   source              = "../modules/nsg"
   nsg_name            = "apim-nsg"
@@ -137,7 +138,7 @@ module "nsg_database" {
   depends_on = [module.vnet, module.subnet_database]
 }
 
-#### AKS  ####
+####################### AKS Network Configuration #######################
 resource "azurerm_public_ip" "aks_nat_ip" {
   name                = "${var.aks_cluster_name}-nat-ip"
   location            = var.location
@@ -212,7 +213,7 @@ module "route_table_aks" {
 
   depends_on = [module.subnet_aks]
 }
-
+#####################################################################
 # Route table for endpoints subnet
 # module "route_table_endpoints" {
 #   source = "../modules/route_table"
@@ -332,39 +333,7 @@ module "route_table_aks" {
 
 #   depends_on = [module.subnet_database]
 # }
-
-# module "redis" {
-#   source = "../modules/redis"
-
-#   redis_name                = "${var.aks_cluster_name}-redis"
-#   location                  = var.location
-#   resource_group_name       = module.resource_group.resource_group_name
-#   capacity                  = 2
-#   family                    = "C"
-#   sku_name                  = "Standard"
-#   # enable_non_ssl_port       = false
-#   # minimum_tls_version       = "1.2"
-#   subnet_id                 = module.subnet_endpoints.subnet_id
-#   private_static_ip_address = "10.0.3.10"
-#   tags                      = var.tags
-
-#   redis_configuration = {
-#     enable_authentication = true
-#     maxmemory_policy      = "volatile-lru"
-#   }
-
-#   patch_schedules = [
-#     {
-#       day_of_week    = "Monday"
-#       start_hour_utc = 2
-#     }
-#   ]
-
-#   private_endpoint_enabled     = true
-#   private_endpoint_subnet_id   = module.subnet_endpoints.subnet_id
-
-#   depends_on = [module.subnet_endpoints]
-# }
+##################################################################
 
 # resource "azurerm_role_assignment" "agic_permission" {
 #   scope                = module.app_gateway.ag_id
@@ -372,35 +341,6 @@ module "route_table_aks" {
 #   principal_id         = module.app_gateway.identity_principal_id
 
 #   depends_on = [module.app_gateway]
-# }
-
-
-# module "aks" {
-#   source = "../modules/aks"
-
-#   cluster_name                   = var.aks_cluster_name
-#   resource_group_name            = var.resource_group_name
-#   location                       = var.location
-#   kubernetes_version             = var.aks_kubernetes_version
-#   system_subnet_id               = module.subnet_aks.subnet_id
-#   system_node_count              = var.aks_system_node_count
-#   system_node_vm_size            = var.aks_system_node_vm_size
-#   system_node_min_count          = var.aks_system_node_min_count
-#   system_node_max_count          = var.aks_system_node_max_count
-#   load_balancer_sku              = var.aks_load_balancer_sku
-#   outbound_type                  = var.aks_outbound_type
-#   sku_tier                       = var.aks_sku_tier
-#   node_pool_os_disk_size_gb      = var.aks_node_pool_os_disk_size_gb
-#   default_node_pool_os_disk_type = var.aks_default_node_pool_os_disk_type
-#   node_pool_max_pods             = var.aks_node_pool_max_pods
-#   default_node_pool_name         = var.aks_default_node_pool_name
-#   private_cluster_enabled        = var.aks_private_cluster_enabled
-#   # private_dns_zone_id            = module.aks_private_dns.private_dns_zone_id
-#   # identity_id                    = module.identity.identity_id
-
-#   tags = var.tags
-
-#   depends_on = [module.aks_route_table]
 # }
 
 # module "app_gateway" {
@@ -436,28 +376,6 @@ module "route_table_aks" {
 #   depends_on = [azurerm_role_assignment.agic_permission]
 # }
 
-# module "acr_private_dns" {
-#   source = "../modules/private_dns"
-
-#   private_dns_zone_name = var.acr_private_dns_zone_name
-#   resource_group_name   = module.resource_group.resource_group_name
-#   virtual_network_id    = module.vnet.vnet_id
-#   registration_enabled  = var.private_dns_registration_enabled
-#   tags                  = var.tags
-# }
-
-# module "acr" {
-#   source              = "../modules/acr"
-#   acr_name            = var.acr_name
-#   resource_group_name = module.resource_group.resource_group_name
-#   location            = module.resource_group.location
-#   sku                 = var.acr_sku
-#   subnet_id           = module.subnet_endpoints.subnet_id
-#   private_dns_zone_id = module.acr_private_dns.private_dns_zone_id
-#   virtual_network_id  = module.vnet.vnet_id
-#   tags                = var.tags
-# }
-
 # module "monitoring" {
 #   source = "../modules/log_analytics"
 
@@ -470,35 +388,6 @@ module "route_table_aks" {
 #   tags                         = var.tags
 # }
 
-# module "identity" {
-#   source = "../modules/identity"
-
-#   identity_name       = "${var.aks_cluster_name}-identity"
-#   resource_group_name = var.resource_group_name
-#   location            = var.location
-#   tags                = var.tags
-
-#   role_assignments = {
-#     # subscription_contributor = {
-#     #   scope                = "/subscriptions/${var.subscription_id}"
-#     #   role_definition_name = "Contributor"
-#     # }
-#     network_contributor = {
-#       scope                = module.vnet.vnet_id
-#       role_definition_name = "Network Contributor"
-#     }
-#     # app_gateway_reader = {
-#     #   scope                = module.app_gateway.ag_id
-#     #   role_definition_name = "Reader"
-#     # }
-#     resource_group_contributor = {
-#       scope                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
-#       role_definition_name = "Contributor"
-#     }
-#   }
-
-#   depends_on = [module.resource_group]
-# }
 
 
 
