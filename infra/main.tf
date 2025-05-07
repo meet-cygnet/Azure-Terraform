@@ -274,7 +274,7 @@ module "apim" {
   subnet_id           = data.azurerm_subnet.apim_subnet.id
   # private_dns_zone_id = module.apim_private_dns_zone.id
   # virtual_network_id = module.vnet.id
-  tags = var.tags 
+  tags = var.tags
 }
 
 #################### AGIC Module ############################################

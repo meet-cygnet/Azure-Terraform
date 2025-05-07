@@ -244,7 +244,7 @@ variable "tags" {
 # variable "storage_account_name" {
 #   description = "The name of the storage account"
 #   type        = string
-  
+
 # }
 
 
@@ -320,7 +320,7 @@ variable "tags" {
 
 variable "apim_name" {
   description = "The name of the API Management instance"
-  type        = string  
+  type        = string
 }
 
 variable "apim_sku_name" {
