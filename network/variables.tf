@@ -79,7 +79,17 @@ variable "aks_cluster_name" {
 #   type        = string
 #   default     = "Standard_v2"
 # }
+# variable "ag_sku_tier" {
+#   description = "SKU tier of the Application Gateway"
+#   type        = string
+#   default     = "Standard_v2"
+# }
 
+# variable "ag_capacity" {
+#   description = "Capacity of the Application Gateway"
+#   type        = number
+#   default     = 2
+# }
 # variable "ag_capacity" {
 #   description = "Capacity of the Application Gateway"
 #   type        = number
@@ -98,7 +108,17 @@ variable "aks_cluster_name" {
 #   type        = bool
 #   default     = false
 # }
+# variable "app_gateway_use_private_ip" {
+#   description = "Whether to use private IP for the Application Gateway"
+#   type        = bool
+#   default     = false
+# }
 
+# variable "agic_verbosity_level" {
+#   description = "Verbosity level of AGIC logs"
+#   type        = number
+#   default     = 3
+# }
 # variable "agic_verbosity_level" {
 #   description = "Verbosity level of AGIC logs"
 #   type        = number
@@ -110,7 +130,17 @@ variable "aks_cluster_name" {
 #   type        = number
 #   default     = 30
 # }
+# variable "agic_reconcile_period_seconds" {
+#   description = "Reconciliation period in seconds for AGIC"
+#   type        = number
+#   default     = 30
+# }
 
+# variable "agic_namespace" {
+#   description = "Namespace where AGIC will be installed"
+#   type        = string
+#   default     = "default"
+# }
 # variable "agic_namespace" {
 #   description = "Namespace where AGIC will be installed"
 #   type        = string
