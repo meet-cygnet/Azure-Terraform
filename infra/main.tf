@@ -42,30 +42,31 @@ data "azurerm_subnet" "endpoints_subnet" {
 }
 
 
-data "azurerm_subnet" "database_subnet" {
-  name                 = "database-subnet"
+data "azurerm_subnet" "vm_subnet" {
+  name                 = "vm-subnet"
   virtual_network_name = var.vnet_name
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
 
 ######################## Linux VM Module #########################################
 
-# module "vm_linux" {
-#   source               = "../modules/vm" # Path to the VM module
-#   vm_name              = "linux-vm"
-#   location             = "East US"
-#   resource_group_name  = "my-resource-group"
-#   vm_size              = "Standard_B1s"
-#   admin_username       = "azureuser"
-#   os_type              = "linux"        # Specify OS type as linux
-#   use_existing_ssh_key = false          # Set to true if you want to use an existing key, false to generate new one
-#   vm_version           = "latest"       # Specify the VM version
-#   vm_sku               = "sku-name"     # Specify the VM SKU
-#   vm_publisher         = "Canonical"    # Specify the VM publisher
-#   vm_offer             = "UbuntuServer" # Specify the VM offer
-#   tags                 = var.tags
-#   subnet_id            = module.subnet_aks.subnet_id # Reference to the subnet ID
-# }
+module "vm_linux" {
+  source               = "../modules/vm"
+  vm_name              = var.linux_vm_name
+  location             = data.azurerm_resource_group.rg.location
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  vm_size              = var.linux_vm_size
+  admin_username       = var.linux_vm_admin_username
+  os_type              = var.linux_vm_os_type
+  use_existing_ssh_key = var.linux_vm_use_existing_ssh_key
+  vm_version           = var.linux_vm_version
+  vm_sku               = var.linux_vm_sku
+  vm_publisher         = var.linux_vm_publisher
+  vm_offer             = var.linux_vm_offer
+  tags                 = var.linux_vm_tags
+  subnet_id            = data.azurerm_subnet.vm_subnet.id
+}
+
 
 ######################## Windows VM Module #########################################
 # module "vm_windows" {
@@ -366,36 +367,36 @@ data "azurerm_subnet" "database_subnet" {
 
 #########################################################################
 #################### Storage Account Module ############################################
-module "storage_account_private_dns_zone" {
-  source               = "../modules/private_dns_zone"
-  zone_name            = "privatelink.blob.core.windows.net"
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  vnet_link_name       = "storage-account-vnet-link"
-  virtual_network_id   = data.azurerm_virtual_network.vnet.id
-  tags                 = var.tags
-  depends_on           = [data.azurerm_virtual_network.vnet]
-}
+# module "storage_account_private_dns_zone" {
+#   source               = "../modules/private_dns_zone"
+#   zone_name            = "privatelink.blob.core.windows.net"
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+#   vnet_link_name       = "storage-account-vnet-link"
+#   virtual_network_id   = data.azurerm_virtual_network.vnet.id
+#   tags                 = var.tags
+#   depends_on           = [data.azurerm_virtual_network.vnet]
+# }
 
-module "storage_account" {
-  source                 = "../modules/storage_account"
-  name                   = var.storage_account_name
-  resource_group_name    = data.azurerm_resource_group.rg.name
-  location               = data.azurerm_resource_group.rg.location
-  account_tier           = "Standard"
-  account_replication_type = "LRS"
-  tags = var.tags
-}
+# module "storage_account" {
+#   source                 = "../modules/storage_account"
+#   name                   = var.storage_account_name
+#   resource_group_name    = data.azurerm_resource_group.rg.name
+#   location               = data.azurerm_resource_group.rg.location
+#   account_tier           = "Standard"
+#   account_replication_type = "LRS"
+#   tags = var.tags
+# }
 
-module "storage_account_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "storage_account_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "storage-account-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.storage_account.storage_account_id
-  subresource_names              = ["blob"]
-  private_dns_zone_id            = module.storage_account_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.storage_account, module.storage_account_private_dns_zone]
-}
+#   name                           = "storage-account-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.storage_account.storage_account_id
+#   subresource_names              = ["blob"]
+#   private_dns_zone_id            = module.storage_account_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.storage_account, module.storage_account_private_dns_zone]
+# }

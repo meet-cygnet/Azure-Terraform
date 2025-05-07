@@ -241,11 +241,82 @@ variable "tags" {
 
 ##############################################################
 ######################## Storage Account Variables ###########
-variable "storage_account_name" {
-  description = "The name of the storage account"
-  type        = string
+# variable "storage_account_name" {
+#   description = "The name of the storage account"
+#   type        = string
   
+# }
+
+
+######################## VM Variables ############################
+
+variable "linux_vm_name" {
+  description = "The name of the Linux VM"
+  type        = string
 }
+
+variable "linux_vm_location" {
+  description = "The Azure region where the VM will be created"
+  type        = string
+}
+
+variable "linux_vm_resource_group_name" {
+  description = "The name of the resource group"
+  type        = string
+}
+
+variable "linux_vm_size" {
+  description = "The size of the VM"
+  type        = string
+}
+
+variable "linux_vm_admin_username" {
+  description = "Admin username for the VM"
+  type        = string
+}
+
+variable "linux_vm_os_type" {
+  description = "The operating system type (linux)"
+  type        = string
+  default     = "linux"
+}
+
+variable "linux_vm_use_existing_ssh_key" {
+  description = "Whether to use an existing SSH key"
+  type        = bool
+}
+
+variable "linux_vm_version" {
+  description = "The version of the VM image"
+  type        = string
+}
+
+variable "linux_vm_sku" {
+  description = "The SKU of the VM image"
+  type        = string
+}
+
+variable "linux_vm_publisher" {
+  description = "The publisher of the VM image"
+  type        = string
+}
+
+variable "linux_vm_offer" {
+  description = "The offer of the VM image"
+  type        = string
+}
+
+variable "linux_vm_tags" {
+  description = "Tags to apply to the VM"
+  type        = map(string)
+  default     = {}
+}
+
+variable "linux_vm_subnet_id" {
+  description = "The subnet ID for the VM's network interface"
+  type        = string
+}
+
 
 ###############################################################
 # variable "address_space" {
