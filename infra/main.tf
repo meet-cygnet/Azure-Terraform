@@ -23,11 +23,11 @@ data "azurerm_virtual_network" "vnet" {
 #   resource_group_name  = data.azurerm_resource_group.rg.name
 # }
 
-# data "azurerm_subnet" "apim_subnet" {
-#   name                 = "apim-subnet"
-#   virtual_network_name = var.vnet_name
-#   resource_group_name  = data.azurerm_resource_group.rg.name
-# }
+data "azurerm_subnet" "apim_subnet" {
+  name                 = "apim-subnet"
+  virtual_network_name = var.vnet_name
+  resource_group_name  = data.azurerm_resource_group.rg.name
+}
 
 # data "azurerm_subnet" "agic_subnet" {
 #   name                 = "agic-subnet"
@@ -42,30 +42,30 @@ data "azurerm_subnet" "endpoints_subnet" {
 }
 
 
-data "azurerm_subnet" "vm_subnet" {
-  name                 = "vm-subnet"
-  virtual_network_name = var.vnet_name
-  resource_group_name  = data.azurerm_resource_group.rg.name
-}
+# data "azurerm_subnet" "vm_subnet" {
+#   name                 = "vm-subnet"
+#   virtual_network_name = var.vnet_name
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+# }
 
 ######################## Linux VM Module #########################################
 
-module "vm_linux" {
-  source               = "../modules/vm"
-  vm_name              = var.linux_vm_name
-  location             = data.azurerm_resource_group.rg.location
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  vm_size              = var.linux_vm_size
-  admin_username       = var.linux_vm_admin_username
-  os_type              = var.linux_vm_os_type
-  use_existing_ssh_key = var.linux_vm_use_existing_ssh_key
-  vm_version           = var.linux_vm_version
-  vm_sku               = var.linux_vm_sku
-  vm_publisher         = var.linux_vm_publisher
-  vm_offer             = var.linux_vm_offer
-  tags                 = var.linux_vm_tags
-  subnet_id            = data.azurerm_subnet.vm_subnet.id
-}
+# module "vm_linux" {
+#   source               = "../modules/vm"
+#   vm_name              = var.linux_vm_name
+#   location             = data.azurerm_resource_group.rg.location
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+#   vm_size              = var.linux_vm_size
+#   admin_username       = var.linux_vm_admin_username
+#   os_type              = var.linux_vm_os_type
+#   use_existing_ssh_key = var.linux_vm_use_existing_ssh_key
+#   vm_version           = var.linux_vm_version
+#   vm_sku               = var.linux_vm_sku
+#   vm_publisher         = var.linux_vm_publisher
+#   vm_offer             = var.linux_vm_offer
+#   tags                 = var.linux_vm_tags
+#   subnet_id            = data.azurerm_subnet.vm_subnet.id
+# }
 
 
 ######################## Windows VM Module #########################################
@@ -262,24 +262,20 @@ module "vm_linux" {
 # }
 
 # Create API Management service in internal mode
-# module "apim" {
-#   source = "../modules/apim"
+module "apim" {
+  source = "../modules/apim"
 
-#   name                = "dev-apim"
-#   location            = var.location
-#   resource_group_name = module.resource_group.name
-#   publisher_name      = "Cygnet"
-#   publisher_email     = "admin@cygnetinfotech.com"
-#   sku_name            = "Developer_1"
-#   subnet_id           = module.apim_subnet.id
-#   private_dns_zone_id = module.apim_private_dns_zone.id
-#   virtual_network_id = module.vnet.id
-#   tags = {
-#     Environment = var.environment
-#     Component   = "APIM"
-#     ManagedBy   = "terraform"
-#   }
-# }
+  name                = var.apim_name
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  publisher_name      = var.apim_publisher_name
+  publisher_email     = var.apim_publisher_email
+  sku_name            = var.apim_sku_name
+  subnet_id           = data.azurerm_subnet.apim_subnet.id
+  # private_dns_zone_id = module.apim_private_dns_zone.id
+  # virtual_network_id = module.vnet.id
+  tags = var.tags 
+}
 
 #################### AGIC Module ############################################
 # Create private DNS zone for AGIC
