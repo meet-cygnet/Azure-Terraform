@@ -176,68 +176,68 @@ variable "tags" {
 ## }
 
 ################## cosmosdb variables##########################################
-# variable "cosmosdb_name" {
-#   description = "name of cosmosdb"
+variable "cosmosdb_name" {
+  description = "name of cosmosdb"
+  type        = string
+}
+
+variable "database_name" {
+  description = "name of database"
+  type        = string
+}
+
+variable "capabilities" {
+  description = "List of capabilities for the Cosmos DB account"
+  type        = list(string)
+  default     = []
+}
+
+variable "shard_key" {
+  description = "shard key"
+  type        = string
+}
+
+variable "offer_type" {
+  description = "offer type"
+  type        = string
+}
+
+variable "consistency_level" {
+  description = "consistency level"
+  type        = string
+}
+
+variable "cosmosdb_kind" {
+  description = "kind of cosmosdb"
+  type        = string
+}
+
+variable "geo_locations" {
+  description = "geo locations"
+  type = list(object({
+    location          = string
+    failover_priority = number
+  }))
+}
+
+variable "backup" {
+  description = "backup"
+  type = object({
+    type                = string
+    interval_in_minutes = number
+    retention_in_hours  = number
+  })
+}
+
+variable "identity_type" {
+  description = "identity type"
+  type        = string
+}
+
+# variable "collection_name" {
+#   description = "name of collection"
 #   type        = string
 # }
-
-# variable "database_name" {
-#   description = "name of database"
-#   type        = string
-# }
-
-# variable "capabilities" {
-#   description = "List of capabilities for the Cosmos DB account"
-#   type        = list(string)
-#   default     = []
-# }
-
-# variable "shard_key" {
-#   description = "shard key"
-#   type        = string
-# }
-
-# variable "offer_type" {
-#   description = "offer type"
-#   type        = string
-# }
-
-# variable "consistency_level" {
-#   description = "consistency level"
-#   type        = string
-# }
-
-# variable "cosmosdb_kind" {
-#   description = "kind of cosmosdb"
-#   type        = string
-# }
-
-# variable "geo_locations" {
-#   description = "geo locations"
-#   type = list(object({
-#     location          = string
-#     failover_priority = number
-#   }))
-# }
-
-# variable "backup" {
-#   description = "backup"
-#   type = object({
-#     type                = string
-#     interval_in_minutes = number
-#     retention_in_hours  = number
-#   })
-# }
-
-# variable "identity_type" {
-#   description = "identity type"
-#   type        = string
-# }
-
-## variable "collection_name" {
-##   description = "name of collection"
-##   type        = string
-## }
 
 ##############################################################
 ######################## Storage Account Variables ###########
@@ -250,93 +250,88 @@ variable "tags" {
 
 ######################## VM Variables ############################
 
-# variable "linux_vm_name" {
-#   description = "The name of the Linux VM"
-#   type        = string
-# }
+variable "linux_vm_name" {
+  description = "The name of the Linux VM"
+  type        = string
+}
 
-# variable "linux_vm_location" {
-#   description = "The Azure region where the VM will be created"
-#   type        = string
-# }
+variable "linux_vm_location" {
+  description = "The Azure region where the VM will be created"
+  type        = string
+}
 
-# variable "linux_vm_resource_group_name" {
-#   description = "The name of the resource group"
-#   type        = string
-# }
+variable "linux_vm_resource_group_name" {
+  description = "The name of the resource group"
+  type        = string
+}
 
-# variable "linux_vm_size" {
-#   description = "The size of the VM"
-#   type        = string
-# }
+variable "linux_vm_size" {
+  description = "The size of the VM"
+  type        = string
+}
 
-# variable "linux_vm_admin_username" {
-#   description = "Admin username for the VM"
-#   type        = string
-# }
+variable "linux_vm_admin_username" {
+  description = "Admin username for the VM"
+  type        = string
+}
 
-# variable "linux_vm_os_type" {
-#   description = "The operating system type (linux)"
-#   type        = string
-#   default     = "linux"
-# }
+variable "linux_vm_os_type" {
+  description = "The operating system type (linux)"
+  type        = string
+  default     = "linux"
+}
 
-# variable "linux_vm_use_existing_ssh_key" {
-#   description = "Whether to use an existing SSH key"
-#   type        = bool
-# }
+variable "linux_vm_use_existing_ssh_key" {
+  description = "Whether to use an existing SSH key"
+  type        = bool
+}
 
-# variable "linux_vm_version" {
-#   description = "The version of the VM image"
-#   type        = string
-# }
+variable "linux_vm_version" {
+  description = "The version of the VM image"
+  type        = string
+}
 
-# variable "linux_vm_sku" {
-#   description = "The SKU of the VM image"
-#   type        = string
-# }
+variable "linux_vm_sku" {
+  description = "The SKU of the VM image"
+  type        = string
+}
 
-# variable "linux_vm_publisher" {
-#   description = "The publisher of the VM image"
-#   type        = string
-# }
+variable "linux_vm_publisher" {
+  description = "The publisher of the VM image"
+  type        = string
+}
 
-# variable "linux_vm_offer" {
-#   description = "The offer of the VM image"
-#   type        = string
-# }
+variable "linux_vm_offer" {
+  description = "The offer of the VM image"
+  type        = string
+}
 
-# variable "linux_vm_tags" {
-#   description = "Tags to apply to the VM"
-#   type        = map(string)
-#   default     = {}
-# }
+variable "enable_public_ip" {
+  description = "Whether to enable a public IP for the VM"
+  type        = bool
+}
 
-# variable "linux_vm_subnet_id" {
-#   description = "The subnet ID for the VM's network interface"
-#   type        = string
-# }
 ############################ APIM Variables ###############################
 
-variable "apim_name" {
-  description = "The name of the API Management instance"
-  type        = string
-}
+# variable "apim_name" {
+#   description = "The name of the API Management instance"
+#   type        = string
+# }
 
-variable "apim_sku_name" {
-  description = "The SKU name of the API Management instance"
-  type        = string
-}
+# variable "apim_sku_name" {
+#   description = "The SKU name of the API Management instance"
+#   type        = string
+# }
 
-variable "apim_publisher_name" {
-  description = "The name of the publisher for the API Management instance"
-  type        = string
-}
+# variable "apim_publisher_name" {
+#   description = "The name of the publisher for the API Management instance"
+#   type        = string
+# }
 
-variable "apim_publisher_email" {
-  description = "The email of the publisher for the API Management instance"
-  type        = string
-}
+# variable "apim_publisher_email" {
+#   description = "The email of the publisher for the API Management instance"
+#   type        = string
+# }
 
 #################FOLLOWING CAN BE DELETED##############################################
 # variable "address_space" {

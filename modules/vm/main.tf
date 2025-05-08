@@ -16,7 +16,7 @@ resource "azurerm_network_interface" "nic" {
 
     # Conditional assignment using a ternary with a safe fallback
     public_ip_address_id = var.enable_public_ip ? (
-      var.public_ip != null ? var.public_ip : azurerm_public_ip.pip
+      var.public_ip != null ? var.public_ip : azurerm_public_ip.pip[0].id
     ) : null
   }
 
