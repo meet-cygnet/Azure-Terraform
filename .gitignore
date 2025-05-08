@@ -19,3 +19,8 @@ terraform.rc
 **/.DS_Store
 .vscode/
 .idea/
+
+*.pem
+*.pem.*
+**/*.pem
+**/*.pem.*
