@@ -160,67 +160,67 @@ variable "tags" {
 #   type        = string
 # }
 
-## variable "redis_shard_count" {
-##   description = "shard count of redis"
-##   type        = number
-## }
-#
-## variable "redis_zones" {
-##   description = "zones of redis"
-##   type        = list(string)
-## }
-#
-## variable "public_network_access_enabled" {
-##   description = "Whether to enable public network access"
-##   type        = bool
-## }
+# # variable "redis_shard_count" {
+# #   description = "shard count of redis"
+# #   type        = number
+# # }
+
+# # variable "redis_zones" {
+# #   description = "zones of redis"
+# #   type        = list(string)
+# # }
+
+# # variable "public_network_access_enabled" {
+# #   description = "Whether to enable public network access"
+# #   type        = bool
+# # }
 
 ################## cosmosdb variables##########################################
 
-variable "cosmosdb_cluster_name" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_cluster_name" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "mongo_version" {
-  description = "The version of the Cosmos DB cluster"
-  type        = string
-}
+# variable "mongo_version" {
+#   description = "The version of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_admin_username" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_admin_username" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_admin_password" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_admin_password" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_shard_count" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_shard_count" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_compute_tier" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_compute_tier" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_high_availability_mode" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_high_availability_mode" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
-variable "cosmosdb_storage_size_in_gb" {
-  description = "The name of the Cosmos DB cluster"
-  type        = number
-}
+# variable "cosmosdb_storage_size_in_gb" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = number
+# }
 
-variable "cosmosdb_public_network_access" {
-  description = "The name of the Cosmos DB cluster"
-  type        = string
-}
+# variable "cosmosdb_public_network_access" {
+#   description = "The name of the Cosmos DB cluster"
+#   type        = string
+# }
 
 ##############################################################
 ######################## Storage Account Variables ###########

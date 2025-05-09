@@ -44,49 +44,5 @@ variable "security_rules" {
 
   # Default rules to match your current static config
   default = [
-    {
-      name                       = "AllowVnetInBound"
-      priority                   = 100
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "*"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "VirtualNetwork"
-      destination_address_prefix = "VirtualNetwork"
-    },
-    {
-      name                       = "DenyAllInbound"
-      priority                   = 4096
-      direction                  = "Inbound"
-      access                     = "Deny"
-      protocol                   = "*"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-    },
-    {
-      name                       = "AllowVnetOutBound"
-      priority                   = 100
-      direction                  = "Outbound"
-      access                     = "Allow"
-      protocol                   = "*"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "VirtualNetwork"
-      destination_address_prefix = "VirtualNetwork"
-    },
-    {
-      name                       = "DenyAllOutbound"
-      priority                   = 4096
-      direction                  = "Outbound"
-      access                     = "Deny"
-      protocol                   = "*"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "*"
-      destination_address_prefix = "*"
-    }
   ]
 }
