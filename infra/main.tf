@@ -314,7 +314,7 @@ module "vm_linux" {
 module "cosmosdb_private_dns_zone" {
   source = "../modules/private_dns_zone"
 
-  zone_name           = "privatelink.mongo.cosmos.azure.com"
+  zone_name           = "privatelink.mongocluster.cosmos.azure.com"
   resource_group_name = data.azurerm_resource_group.rg.name
   virtual_network_id  = data.azurerm_virtual_network.vnet.id
   vnet_link_name      = "cosmosdb-vnet-link"
@@ -325,27 +325,19 @@ module "cosmosdb_private_dns_zone" {
 module "cosmosdb" {
   source = "../modules/cosmosdb_mongodb"
 
-  cosmosdb_name       = var.cosmosdb_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  offer_type          = var.offer_type
-  capabilities        = var.capabilities
-  geo_locations       = var.geo_locations
-  backup              = var.backup
-  identity_type       = var.identity_type
-  database_name       = var.database_name
-  # collection_name     = var.collection_name
-  shard_key         = var.shard_key
-  consistency_level = var.consistency_level
+  resource_group_name    = data.azurerm_resource_group.rg.name
+  location               = data.azurerm_resource_group.rg.location
+  cluster_name           = var.cosmosdb_cluster_name
+  mongodb_version        = var.mongo_version
+  admin_username         = var.cosmosdb_admin_username
+  admin_password         = var.cosmosdb_admin_password # store in a secret manager in production
+  shard_count            = var.cosmosdb_shard_count
+  compute_tier           = var.cosmosdb_compute_tier
+  high_availability_mode = var.cosmosdb_high_availability_mode
+  storage_size_in_gb     = var.cosmosdb_storage_size_in_gb
+  public_network_access  = var.cosmosdb_public_network_access
+  tags                   = var.tags
 
-  indexes = [
-    {
-      keys   = [var.shard_key]
-      unique = true
-    }
-  ]
-
-  tags = var.tags
 }
 
 module "cosmosdb_private_endpoint" {
@@ -355,8 +347,8 @@ module "cosmosdb_private_endpoint" {
   location                       = data.azurerm_resource_group.rg.location
   resource_group_name            = data.azurerm_resource_group.rg.name
   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.cosmosdb.cosmosdb_account_id
-  subresource_names              = ["MongoDB"]
+  private_connection_resource_id = module.cosmosdb.mongo_cluster_id
+  subresource_names              = ["mongoCluster"]
   private_dns_zone_id            = module.cosmosdb_private_dns_zone.id
   tags                           = var.tags
   depends_on                     = [module.cosmosdb, module.cosmosdb_private_dns_zone]

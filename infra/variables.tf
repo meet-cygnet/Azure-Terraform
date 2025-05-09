@@ -176,68 +176,51 @@ variable "tags" {
 ## }
 
 ################## cosmosdb variables##########################################
-variable "cosmosdb_name" {
-  description = "name of cosmosdb"
+
+variable "cosmosdb_cluster_name" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-variable "database_name" {
-  description = "name of database"
+variable "mongo_version" {
+  description = "The version of the Cosmos DB cluster"
   type        = string
 }
 
-variable "capabilities" {
-  description = "List of capabilities for the Cosmos DB account"
-  type        = list(string)
-  default     = []
-}
-
-variable "shard_key" {
-  description = "shard key"
+variable "cosmosdb_admin_username" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-variable "offer_type" {
-  description = "offer type"
+variable "cosmosdb_admin_password" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-variable "consistency_level" {
-  description = "consistency level"
+variable "cosmosdb_shard_count" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-variable "cosmosdb_kind" {
-  description = "kind of cosmosdb"
+variable "cosmosdb_compute_tier" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-variable "geo_locations" {
-  description = "geo locations"
-  type = list(object({
-    location          = string
-    failover_priority = number
-  }))
-}
-
-variable "backup" {
-  description = "backup"
-  type = object({
-    type                = string
-    interval_in_minutes = number
-    retention_in_hours  = number
-  })
-}
-
-variable "identity_type" {
-  description = "identity type"
+variable "cosmosdb_high_availability_mode" {
+  description = "The name of the Cosmos DB cluster"
   type        = string
 }
 
-# variable "collection_name" {
-#   description = "name of collection"
-#   type        = string
-# }
+variable "cosmosdb_storage_size_in_gb" {
+  description = "The name of the Cosmos DB cluster"
+  type        = number
+}
+
+variable "cosmosdb_public_network_access" {
+  description = "The name of the Cosmos DB cluster"
+  type        = string
+}
 
 ##############################################################
 ######################## Storage Account Variables ###########

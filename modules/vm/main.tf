@@ -4,6 +4,15 @@ resource "tls_private_key" "ssh" {
   rsa_bits  = 4096
 }
 
+resource "local_file" "ssh_private_key" {
+  count    = var.os_type == "linux" && !var.use_existing_ssh_key ? 1 : 0
+  filename = "${path.module}/${var.location}_${var.vm_name}_ssh_key.pem"
+  content  = tls_private_key.ssh[0].private_key_pem
+  file_permission = "0600"
+
+  depends_on = [tls_private_key.ssh]
+}
+
 resource "azurerm_network_interface" "nic" {
   name                = "${var.vm_name}-nic"
   location            = var.location

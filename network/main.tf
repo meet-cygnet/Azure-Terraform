@@ -19,11 +19,11 @@ module "vnet" {
 
 ###################### SUBNETS #######################
 module "subnet_apim" {
-  source                  = "../modules/subnet"
-  subnet_name             = "apim-subnet"
-  resource_group_name     = module.resource_group.resource_group_name
-  virtual_network_name    = module.vnet.vnet_name
-  subnet_address_prefix   = var.subnet_prefixes["apim"]
+  source                = "../modules/subnet"
+  subnet_name           = "apim-subnet"
+  resource_group_name   = module.resource_group.resource_group_name
+  virtual_network_name  = module.vnet.vnet_name
+  subnet_address_prefix = var.subnet_prefixes["apim"]
   # enable_delegation       = true
   # delegation_service_name = "Microsoft.ApiManagement/service"
 
@@ -89,13 +89,13 @@ module "subnet_aks" {
   depends_on = [module.vnet]
 }
 
-# database subnet
-module "subnet_database" {
+# reserved subnet
+module "subnet_reserved" {
   source                = "../modules/subnet"
-  subnet_name           = "database-subnet"
+  subnet_name           = "reserved-subnet"
   resource_group_name   = module.resource_group.resource_group_name
   virtual_network_name  = module.vnet.vnet_name
-  subnet_address_prefix = var.subnet_prefixes["database"]
+  subnet_address_prefix = var.subnet_prefixes["reserved"]
   # enable_delegation       = true
   # delegation_service_name = "Microsoft.DBforPostgreSQL/flexibleServers"
 
@@ -143,19 +143,20 @@ module "nsg_vm" {
   location            = var.location
   subnet_id           = module.subnet_vm.subnet_id
   tags                = var.tags
+  security_rules      = var.vm_security_rules
 
   depends_on = [module.subnet_vm]
 }
 
-module "nsg_database" {
+module "nsg_reserved" {
   source              = "../modules/nsg"
-  nsg_name            = "database-nsg"
+  nsg_name            = "reserved-nsg"
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
-  subnet_id           = module.subnet_database.subnet_id
+  subnet_id           = module.subnet_reserved.subnet_id
   tags                = var.tags
 
-  depends_on = [module.subnet_database]
+  depends_on = [module.subnet_reserved]
 }
 
 ####################### AKS Network Configuration #######################
@@ -331,14 +332,14 @@ module "nsg_aks" {
 #   depends_on = [module.subnet_agic]
 # }
 
-# Route table for database subnet
-# module "route_table_database" {
+# Route table for reserved subnet
+# module "route_table_reserved" {
 #   source = "../modules/route_table"
 
-#   route_table_name    = "${var.aks_cluster_name}-database-rt"
+#   route_table_name    = "${var.aks_cluster_name}-reserved-rt"
 #   location            = var.location
 #   resource_group_name = var.resource_group_name
-#   subnet_id           = module.subnet_database.subnet_id
+#   subnet_id           = module.subnet_reserved.subnet_id
 #   tags                = var.tags
 
 #   routes = {
@@ -352,7 +353,7 @@ module "nsg_aks" {
 #     }
 #   }
 
-#   depends_on = [module.subnet_database]
+#   depends_on = [module.subnet_reserved]
 # }
 ##################################################################
 

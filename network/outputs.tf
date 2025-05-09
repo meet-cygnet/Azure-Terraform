@@ -28,7 +28,7 @@ output "subnet_ids" {
     agic      = module.subnet_agic.subnet_id
     endpoints = module.subnet_endpoints.subnet_id
     aks       = module.subnet_aks.subnet_id
-    database  = module.subnet_database.subnet_id
+    reserved  = module.subnet_reserved.subnet_id
   }
 }
 
@@ -90,9 +90,9 @@ output "aks_nsg_id" {
   value       = module.nsg_aks.nsg_id
 }
 
-output "database_nsg_id" {
-  description = "ID of the database NSG"
-  value       = module.nsg_database.nsg_id
+output "reserved_nsg_id" {
+  description = "ID of the reserved NSG"
+  value       = module.nsg_reserved.nsg_id
 }
 
 # ACR outputs
