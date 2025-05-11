@@ -389,3 +389,61 @@ module "vm_linux" {
 #   tags                           = var.tags
 #   depends_on                     = [module.storage_account, module.storage_account_private_dns_zone]
 # }
+
+######################### Event Hub Module ############################################
+module "eventhub_private_dns_zone" {
+  source               = "../modules/private_dns_zone"
+  zone_name            = "privatelink.servicebus.windows.net"
+  resource_group_name  = data.azurerm_resource_group.rg.name
+  vnet_link_name       = "eventhub-vnet-link"
+  virtual_network_id   = data.azurerm_virtual_network.vnet.id
+  tags                 = var.tags
+  depends_on           = [data.azurerm_virtual_network.vnet]
+}
+
+
+module "private_eventhub" {
+  source              = "../modules/eventhubs"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  location            = var.location
+  eventhub_sku = var.eventhub_sku
+  eventhub_namespace_name = var.eventhub_namespace_name
+  processing_units    = var.processing_units
+  subnet_id           = data.azurerm_subnet.endpoints_subnet.id
+
+  eventhubs = [
+    {
+      name              = "stream1"
+      partition_count   = 4
+      message_retention = 7
+    }
+  ]
+
+  authorization_rules = [
+    {
+      name           = "send-read"
+      eventhub_name  = "stream1"
+      listen         = true
+      send           = true
+      manage         = false
+    }
+  ]
+
+  tags = var.tags
+  depends_on = [data.azurerm_virtual_network.vnet]
+}
+
+
+module "event_hub_private_endpoint" {
+  source = "../modules/private_endpoint"
+
+  name                           = "eventhub-private-endpoint"
+  location                       = data.azurerm_resource_group.rg.location
+  resource_group_name            = data.azurerm_resource_group.rg.name
+  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+  private_connection_resource_id = module.private_eventhub.namespace_id
+  subresource_names              = ["namespace"]
+  private_dns_zone_id            = module.eventhub_private_dns_zone.id
+  tags                           = var.tags
+  depends_on                     = [module.private_eventhub, module.eventhub_private_dns_zone]
+}

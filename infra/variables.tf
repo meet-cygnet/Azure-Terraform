@@ -316,6 +316,21 @@ variable "enable_public_ip" {
 #   type        = string
 # }
 
+################################ Event Hub Variables ###############################
+variable "eventhub_namespace_name" {
+  description = "The name of the Event Hub namespace"
+  type        = string
+}
+
+variable "eventhub_sku" {
+  description = "The SKU of the Event Hub namespace"
+  type        = string
+}
+
+variable "processing_units" {
+  description = "The number of processing units for the Event Hub namespace"
+  type        = number
+}
 #################FOLLOWING CAN BE DELETED##############################################
 # variable "address_space" {
 #   description = "The address space for the virtual network"
