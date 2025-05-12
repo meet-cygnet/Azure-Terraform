@@ -391,59 +391,98 @@ module "vm_linux" {
 # }
 
 ######################### Event Hub Module ############################################
-module "eventhub_private_dns_zone" {
-  source               = "../modules/private_dns_zone"
-  zone_name            = "privatelink.servicebus.windows.net"
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  vnet_link_name       = "eventhub-vnet-link"
-  virtual_network_id   = data.azurerm_virtual_network.vnet.id
-  tags                 = var.tags
-  depends_on           = [data.azurerm_virtual_network.vnet]
-}
+# module "eventhub_private_dns_zone" {
+#   source              = "../modules/private_dns_zone"
+#   zone_name           = "privatelink.servicebus.windows.net"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   vnet_link_name      = "eventhub-vnet-link"
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
 
-module "private_eventhub" {
-  source              = "../modules/eventhubs"
+# module "private_eventhub" {
+#   source                  = "../modules/eventhubs"
+#   resource_group_name     = data.azurerm_resource_group.rg.name
+#   location                = var.location
+#   eventhub_sku            = var.eventhub_sku
+#   eventhub_namespace_name = var.eventhub_namespace_name
+#   processing_units        = var.processing_units
+#   subnet_id               = data.azurerm_subnet.endpoints_subnet.id
+
+#   eventhubs = [
+#     {
+#       name              = "stream1"
+#       partition_count   = 4
+#       message_retention = 7
+#     }
+#   ]
+
+#   authorization_rules = [
+#     {
+#       name          = "send-read"
+#       eventhub_name = "stream1"
+#       listen        = true
+#       send          = true
+#       manage        = false
+#     }
+#   ]
+
+#   tags       = var.tags
+#   depends_on = [data.azurerm_virtual_network.vnet]
+# }
+
+
+# module "event_hub_private_endpoint" {
+#   source = "../modules/private_endpoint"
+
+#   name                           = "eventhub-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.private_eventhub.namespace_id
+#   subresource_names              = ["namespace"]
+#   private_dns_zone_id            = module.eventhub_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.private_eventhub, module.eventhub_private_dns_zone]
+# }
+
+######################### Service Bus Module ############################################
+
+module "servicebus_private_dns_zone" {
+  source              = "../modules/private_dns_zone"
+  zone_name           = "privatelink.servicebus.windows.net"
   resource_group_name = data.azurerm_resource_group.rg.name
-  location            = var.location
-  eventhub_sku = var.eventhub_sku
-  eventhub_namespace_name = var.eventhub_namespace_name
-  processing_units    = var.processing_units
-  subnet_id           = data.azurerm_subnet.endpoints_subnet.id
-
-  eventhubs = [
-    {
-      name              = "stream1"
-      partition_count   = 4
-      message_retention = 7
-    }
-  ]
-
-  authorization_rules = [
-    {
-      name           = "send-read"
-      eventhub_name  = "stream1"
-      listen         = true
-      send           = true
-      manage         = false
-    }
-  ]
-
-  tags = var.tags
-  depends_on = [data.azurerm_virtual_network.vnet]
+  vnet_link_name      = "servicebus-vnet-link"
+  virtual_network_id  = data.azurerm_virtual_network.vnet.id
+  tags                = var.tags
+  depends_on          = [data.azurerm_virtual_network.vnet]
 }
 
+module "private_servicebus" {
+  source              = "../modules/servicebus"
+  namespace_name      = var.servicebus_namespace_name
+  location            = var.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  enable_queue        = var.enable_queue
+  sku                 = var.servicebus_sku
+  queue_name          = var.servicebus_queue_name
+  tags                = var.tags
+}
 
-module "event_hub_private_endpoint" {
+module "servicebus_private_endpoint" {
   source = "../modules/private_endpoint"
 
-  name                           = "eventhub-private-endpoint"
+  name                           = "servicebus-private-endpoint"
   location                       = data.azurerm_resource_group.rg.location
   resource_group_name            = data.azurerm_resource_group.rg.name
   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.private_eventhub.namespace_id
+  private_connection_resource_id = module.private_servicebus.servicebus_namespace_id
   subresource_names              = ["namespace"]
-  private_dns_zone_id            = module.eventhub_private_dns_zone.id
+  private_dns_zone_id            = module.servicebus_private_dns_zone.id
   tags                           = var.tags
-  depends_on                     = [module.private_eventhub, module.eventhub_private_dns_zone]
+  depends_on                     = [module.private_servicebus, module.servicebus_private_dns_zone]
 }
+
+###########################################################################################

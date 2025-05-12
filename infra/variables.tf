@@ -243,11 +243,6 @@ variable "linux_vm_location" {
   type        = string
 }
 
-variable "linux_vm_resource_group_name" {
-  description = "The name of the resource group"
-  type        = string
-}
-
 variable "linux_vm_size" {
   description = "The size of the VM"
   type        = string
@@ -317,20 +312,49 @@ variable "enable_public_ip" {
 # }
 
 ################################ Event Hub Variables ###############################
-variable "eventhub_namespace_name" {
-  description = "The name of the Event Hub namespace"
+# variable "eventhub_namespace_name" {
+#   description = "The name of the Event Hub namespace"
+#   type        = string
+# }
+
+# variable "eventhub_sku" {
+#   description = "The SKU of the Event Hub namespace"
+#   type        = string
+# }
+
+# variable "processing_units" {
+#   description = "The number of processing units for the Event Hub namespace"
+#   type        = number
+# }
+
+######################### Service Bus Variables ############################
+variable "servicebus_namespace_name" {
+  description = "The name of the Service Bus namespace"
   type        = string
 }
 
-variable "eventhub_sku" {
-  description = "The SKU of the Event Hub namespace"
+variable "servicebus_sku" {
+  description = "The SKU oSf the Service Bus namespace"
   type        = string
 }
 
-variable "processing_units" {
-  description = "The number of processing units for the Event Hub namespace"
+variable "servicebus_capacity" {
+  description = "The capacity of the Service Bus namespace"
   type        = number
 }
+
+variable "servicebus_queue_name" {
+  description = "The name of the Service Bus queue"
+  type        = string
+}
+
+variable "enable_queue" {
+  description = "Whether to enable the Service Bus queue"
+  type        = bool
+
+}
+
+
 #################FOLLOWING CAN BE DELETED##############################################
 # variable "address_space" {
 #   description = "The address space for the virtual network"
