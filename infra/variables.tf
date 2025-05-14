@@ -8,14 +8,14 @@ variable "tenant_id" {
   description = "The Azure tenant ID"
   type        = string
 }
-# variable "client_id" {
-#   description = "The Azure client ID"
-#   type        = string
-# }
-# variable "client_secret" {
-#   description = "The Azure client secret"
-#   type        = string
-# }
+variable "client_id" {
+  description = "The Azure client ID"
+  type        = string
+}
+variable "client_secret" {
+  description = "The Azure client secret"
+  type        = string
+}
 
 variable "resource_group_name" {
   description = "The name of the resource group"
@@ -97,10 +97,10 @@ variable "tags" {
 #   type        = string
 # }
 
-## variable "postgresql_ha_mode"{
-##   description = "ha mode of postgresql"
-##   type        = string
-## }
+# # variable "postgresql_ha_mode"{
+# #   description = "ha mode of postgresql"
+# #   type        = string
+# # }
 
 # variable "enable_ha" {
 #   description = "enable_ha"
@@ -328,31 +328,31 @@ variable "enable_public_ip" {
 # }
 
 ######################### Service Bus Variables ############################
-variable "servicebus_namespace_name" {
-  description = "The name of the Service Bus namespace"
-  type        = string
-}
+# variable "servicebus_namespace_name" {
+#   description = "The name of the Service Bus namespace"
+#   type        = string
+# }
 
-variable "servicebus_sku" {
-  description = "The SKU oSf the Service Bus namespace"
-  type        = string
-}
+# variable "servicebus_sku" {
+#   description = "The SKU oSf the Service Bus namespace"
+#   type        = string
+# }
 
-variable "servicebus_capacity" {
-  description = "The capacity of the Service Bus namespace"
-  type        = number
-}
+# variable "servicebus_capacity" {
+#   description = "The capacity of the Service Bus namespace"
+#   type        = number
+# }
 
-variable "servicebus_queue_name" {
-  description = "The name of the Service Bus queue"
-  type        = string
-}
+# variable "servicebus_queue_name" {
+#   description = "The name of the Service Bus queue"
+#   type        = string
+# }
 
-variable "enable_queue" {
-  description = "Whether to enable the Service Bus queue"
-  type        = bool
+# variable "enable_queue" {
+#   description = "Whether to enable the Service Bus queue"
+#   type        = bool
 
-}
+# }
 
 
 #################FOLLOWING CAN BE DELETED##############################################

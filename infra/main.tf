@@ -88,7 +88,7 @@ module "vm_linux" {
 # }
 
 ######################## AKS Module #########################################
-# Create user-assigned identity for AKS and AGIC
+# # Create user-assigned identity for AKS and AGIC
 # resource "azurerm_user_assigned_identity" "cluster" {
 #   name                = "aks-agic-identity"
 #   resource_group_name = data.azurerm_resource_group.rg.name
@@ -124,7 +124,9 @@ module "vm_linux" {
 #   # private_dns_zone_id        = module.aks_private_dns_zone.id
 #   subnet_id = data.azurerm_subnet.aks_subnet.id
 #   # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
-
+#   client_id              = var.client_id
+#   client_secret          = var.client_secret
+#   # sku_tier               = var.aks_sku_tier
 #   default_node_pool_name = "systempool"
 
 #   # enable_auto_scaling   = true
@@ -450,39 +452,39 @@ module "vm_linux" {
 
 ######################### Service Bus Module ############################################
 
-module "servicebus_private_dns_zone" {
-  source              = "../modules/private_dns_zone"
-  zone_name           = "privatelink.servicebus.windows.net"
-  resource_group_name = data.azurerm_resource_group.rg.name
-  vnet_link_name      = "servicebus-vnet-link"
-  virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  tags                = var.tags
-  depends_on          = [data.azurerm_virtual_network.vnet]
-}
+# module "servicebus_private_dns_zone" {
+#   source              = "../modules/private_dns_zone"
+#   zone_name           = "privatelink.servicebus.windows.net"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   vnet_link_name      = "servicebus-vnet-link"
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
 
-module "private_servicebus" {
-  source              = "../modules/servicebus"
-  namespace_name      = var.servicebus_namespace_name
-  location            = var.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  enable_queue        = var.enable_queue
-  sku                 = var.servicebus_sku
-  queue_name          = var.servicebus_queue_name
-  tags                = var.tags
-}
+# module "private_servicebus" {
+#   source              = "../modules/servicebus"
+#   namespace_name      = var.servicebus_namespace_name
+#   location            = var.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   enable_queue        = var.enable_queue
+#   sku                 = var.servicebus_sku
+#   queue_name          = var.servicebus_queue_name
+#   tags                = var.tags
+# }
 
-module "servicebus_private_endpoint" {
-  source = "../modules/private_endpoint"
+# module "servicebus_private_endpoint" {
+#   source = "../modules/private_endpoint"
 
-  name                           = "servicebus-private-endpoint"
-  location                       = data.azurerm_resource_group.rg.location
-  resource_group_name            = data.azurerm_resource_group.rg.name
-  private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-  private_connection_resource_id = module.private_servicebus.servicebus_namespace_id
-  subresource_names              = ["namespace"]
-  private_dns_zone_id            = module.servicebus_private_dns_zone.id
-  tags                           = var.tags
-  depends_on                     = [module.private_servicebus, module.servicebus_private_dns_zone]
-}
+#   name                           = "servicebus-private-endpoint"
+#   location                       = data.azurerm_resource_group.rg.location
+#   resource_group_name            = data.azurerm_resource_group.rg.name
+#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
+#   private_connection_resource_id = module.private_servicebus.servicebus_namespace_id
+#   subresource_names              = ["namespace"]
+#   private_dns_zone_id            = module.servicebus_private_dns_zone.id
+#   tags                           = var.tags
+#   depends_on                     = [module.private_servicebus, module.servicebus_private_dns_zone]
+# }
 
 ###########################################################################################

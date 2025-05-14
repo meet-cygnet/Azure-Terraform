@@ -4,7 +4,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = var.resource_group_name
   dns_prefix         = var.cluster_name
   kubernetes_version  = var.kubernetes_version
-
+  
   private_cluster_enabled = true
   # private_dns_zone_id    = var.private_dns_zone_id
   
@@ -27,9 +27,14 @@ resource "azurerm_kubernetes_cluster" "aks" {
     # dns_service_ip     = var.dns_service_ip
   }
 
-  identity {
-    type         = "SystemAssigned"
-    # identity_ids = [var.user_assigned_identity_id]
+  # identity {
+  #   type         = "SystemAssigned"
+  #   # identity_ids = [var.user_assigned_identity_id]
+  # }
+
+  service_principal {
+    client_id     = var.client_id
+    client_secret = var.client_secret
   }
 
   tags = var.tags

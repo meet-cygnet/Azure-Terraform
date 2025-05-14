@@ -13,6 +13,16 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable client_id {
+  description = "Client ID for the AKS cluster"
+  type        = string
+}
+
+variable "client_secret" {
+  description = "Client secret for the AKS cluster"
+  type        = string
+  
+}
 # variable "dns_prefix" {
 #   description = "DNS prefix for the managed cluster"
 #   type        = string
