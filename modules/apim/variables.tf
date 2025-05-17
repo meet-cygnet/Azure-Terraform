@@ -52,6 +52,12 @@ variable "virtual_network_type" {
   default     = "Internal"
 }
 
+variable "public_network_access_enabled" {
+  description = "Whether public network access is enabled. Default is true."
+  type        = bool
+  default     = false
+}
+
 # variable "virtual_network_configuration" {
 #   description = <<EOT
 # Optional virtual network configuration block.

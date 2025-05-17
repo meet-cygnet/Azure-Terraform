@@ -13,7 +13,8 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   storage_mb                    = var.storage_mb
   storage_tier                  = var.storage_tier
   zone                          = var.zone
-  # private_dns_zone_id           = var.private_dns_zone_id
+  delegated_subnet_id           = var.delegated_subnet_id
+  private_dns_zone_id           = var.private_dns_zone_id
   # delegated_subnet_id           = var.delegated_subnet_id
   public_network_access_enabled = var.public_network_access_enabled
   dynamic "high_availability" {

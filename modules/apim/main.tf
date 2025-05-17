@@ -6,11 +6,10 @@ resource "azurerm_api_management" "apim" {
   publisher_email     = var.publisher_email
   sku_name            = var.sku_name # Must be Premium for VNet integration
   tags = var.tags
-
+  public_network_access_enabled = var.public_network_access_enabled
   identity {
     type = var.identity_type
   }
-# 
   virtual_network_type = var.virtual_network_type
   virtual_network_configuration {
     subnet_id = var.subnet_id

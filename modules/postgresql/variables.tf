@@ -66,15 +66,15 @@ variable "zone" {
   default     = "1"
 }
 
-# variable "delegated_subnet_id" {
-#   description = "ID of the delegated subnet for Flexible Server"
-#   type        = string
-# }
+variable "delegated_subnet_id" {
+  description = "ID of the delegated subnet for Flexible Server"
+  type        = string
+}
 
-# variable "private_dns_zone_id" {
-#   description = "ID of the private DNS zone"
-#   type        = string
-# }
+variable "private_dns_zone_id" {
+  description = "ID of the private DNS zone"
+  type        = string
+}
 
 variable "enable_ha" {
   type    = bool

@@ -72,55 +72,55 @@ variable "tags" {
 # }
 ######################### POSTGRESQL VARIABLES ######################
 
-# variable "postgresql_admin_username" {
-#   description = "The admin username for the postgresql server"
+variable "postgresql_admin_username" {
+  description = "The admin username for the postgresql server"
+  type        = string
+}
+
+variable "postgresql_admin_password" {
+  description = "The admin password for the postgresql server"
+  type        = string
+}
+
+variable "postgresql_name" {
+  description = "name of postgresql server"
+  type        = string
+}
+
+variable "postgresql_sku_name" {
+  description = "value of sku name"
+  type        = string
+}
+
+variable "postgresql_version" {
+  description = "version of postgresql"
+  type        = string
+}
+
+# variable "postgresql_ha_mode"{
+#   description = "ha mode of postgresql"
 #   type        = string
 # }
 
-# variable "postgresql_admin_password" {
-#   description = "The admin password for the postgresql server"
-#   type        = string
-# }
+variable "enable_ha" {
+  description = "enable_ha"
+  type        = bool
+}
 
-# variable "postgresql_name" {
-#   description = "name of postgresql server"
-#   type        = string
-# }
+variable "enable_azure_ad_auth" {
+  description = "enable_azure_ad_auth"
+  type        = bool
+}
 
-# variable "postgresql_sku_name" {
-#   description = "value of sku name"
-#   type        = string
-# }
+variable "postgresql_backup_retention_days" {
+  description = "postgresql_backup_retention_days"
+  type        = number
+}
 
-# variable "postgresql_version" {
-#   description = "version of postgresql"
-#   type        = string
-# }
-
-# # variable "postgresql_ha_mode"{
-# #   description = "ha mode of postgresql"
-# #   type        = string
-# # }
-
-# variable "enable_ha" {
-#   description = "enable_ha"
-#   type        = bool
-# }
-
-# variable "enable_azure_ad_auth" {
-#   description = "enable_azure_ad_auth"
-#   type        = bool
-# }
-
-# variable "postgresql_backup_retention_days" {
-#   description = "postgresql_backup_retention_days"
-#   type        = number
-# }
-
-# variable "storage_tier" {
-#   description = "storage_tier"
-#   type        = string
-# }
+variable "storage_tier" {
+  description = "storage_tier"
+  type        = string
+}
 
 ###################################################################
 ##################### REDIS VARIABLES ##############################
@@ -291,25 +291,25 @@ variable "enable_public_ip" {
 
 ############################ APIM Variables ###############################
 
-# variable "apim_name" {
-#   description = "The name of the API Management instance"
-#   type        = string
-# }
+variable "apim_name" {
+  description = "The name of the API Management instance"
+  type        = string
+}
 
-# variable "apim_sku_name" {
-#   description = "The SKU name of the API Management instance"
-#   type        = string
-# }
+variable "apim_sku_name" {
+  description = "The SKU name of the API Management instance"
+  type        = string
+}
 
-# variable "apim_publisher_name" {
-#   description = "The name of the publisher for the API Management instance"
-#   type        = string
-# }
+variable "apim_publisher_name" {
+  description = "The name of the publisher for the API Management instance"
+  type        = string
+}
 
-# variable "apim_publisher_email" {
-#   description = "The email of the publisher for the API Management instance"
-#   type        = string
-# }
+variable "apim_publisher_email" {
+  description = "The email of the publisher for the API Management instance"
+  type        = string
+}
 
 ################################ Event Hub Variables ###############################
 # variable "eventhub_namespace_name" {

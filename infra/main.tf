@@ -18,32 +18,43 @@ data "azurerm_virtual_network" "vnet" {
 }
 
 # data "azurerm_subnet" "aks_subnet" {
-#   name                 = var.aks_subnet_name
+#   name                 = "aks-subnet"
 #   virtual_network_name = var.vnet_name
 #   resource_group_name  = data.azurerm_resource_group.rg.name
 # }
 
-data "azurerm_subnet" "apim_subnet" {
-  name                 = "apim-subnet"
-  virtual_network_name = var.vnet_name
-  resource_group_name  = data.azurerm_resource_group.rg.name
-}
+# data "azurerm_subnet" "reserved_subnet" {
+#   name                 = "apim-subnet"
+#   virtual_network_name = var.vnet_name
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+# }
 
-# data "azurerm_subnet" "agic_subnet" {
+# data "azurerm_subnet" "app_gw_subnet" {
 #   name                 = "agic-subnet"
 #   virtual_network_name = var.vnet_name
 #   resource_group_name  = data.azurerm_resource_group.rg.name
 # }
 
-data "azurerm_subnet" "endpoints_subnet" {
-  name                 = "endpoints-subnet"
+# data "azurerm_subnet" "redis_subnet" {
+#   name                 = "endpoints-subnet"
+#   virtual_network_name = var.vnet_name
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+# }
+
+data "azurerm_subnet" "bastion_subnet" {
+  name                 = "bastion-subnet"
   virtual_network_name = var.vnet_name
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
 
+# data "azurerm_subnet" "endpoints_subnet" {
+#   name                 = "vm-subnet"
+#   virtual_network_name = var.vnet_name
+#   resource_group_name  = data.azurerm_resource_group.rg.name
+# }
 
-data "azurerm_subnet" "vm_subnet" {
-  name                 = "vm-subnet"
+data "azurerm_subnet" "postgres_subnet" {
+  name                 = "postgres-subnet"
   virtual_network_name = var.vnet_name
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
@@ -65,7 +76,7 @@ module "vm_linux" {
   vm_offer             = var.linux_vm_offer
   tags                 = var.tags
   enable_public_ip     = var.enable_public_ip # Set to true if you want to enable public IP
-  subnet_id            = data.azurerm_subnet.vm_subnet.id
+  subnet_id            = data.azurerm_subnet.bastion_subnet.id # Reference to the subnet ID
 }
 
 
@@ -154,40 +165,40 @@ module "vm_linux" {
 # }
 
 #################### POSTGRESQL Module ############################################
-# module "postgesql_private_dns_zone" {
-#   source = "../modules/private_dns_zone"
+module "postgesql_private_dns_zone" {
+  source = "../modules/private_dns_zone"
 
-#   zone_name           = "privatelink.postgres.database.azure.com"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
-#   vnet_link_name      = "postgresql-vnet-link"
-#   tags                = var.tags
-#   depends_on          = [data.azurerm_virtual_network.vnet]
-# }
+  zone_name           = "privatelink.postgres.database.azure.com"
+  resource_group_name = data.azurerm_resource_group.rg.name
+  virtual_network_id  = data.azurerm_virtual_network.vnet.id
+  vnet_link_name      = "postgresql-vnet-link"
+  tags                = var.tags
+  depends_on          = [data.azurerm_virtual_network.vnet]
+}
 
-# module "postgresql" {
-#   source = "../modules/postgresql"
+module "postgresql" {
+  source = "../modules/postgresql"
 
-#   name                = var.postgresql_name
-#   location            = data.azurerm_resource_group.rg.location
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   admin_username      = var.postgresql_admin_username
-#   admin_password      = var.postgresql_admin_password # store in a secret manager in production
-#   sku_name            = var.postgresql_sku_name
-#   postgresql_version  = var.postgresql_version
-#   storage_mb          = 32768
-#   storage_tier        = var.storage_tier
-#   zone                = "1"
-#   # delegated_subnet_id   = data.azurerm_subnet.database_subnet.id
-#   # private_dns_zone_id   = module.postgesql_private_dns_zone.id
-#   backup_retention_days = var.postgresql_backup_retention_days
-#   geo_redundant_backup  = false
-#   enable_ha             = var.enable_ha
-#   enable_azure_ad_auth  = var.enable_azure_ad_auth
-#   tags                  = var.tags
+  name                = var.postgresql_name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+  admin_username      = var.postgresql_admin_username
+  admin_password      = var.postgresql_admin_password # store in a secret manager in production
+  sku_name            = var.postgresql_sku_name
+  postgresql_version  = var.postgresql_version
+  storage_mb          = 32768
+  storage_tier        = var.storage_tier
+  zone                = "1"
+  private_dns_zone_id   = module.postgesql_private_dns_zone.id
+  delegated_subnet_id   = data.azurerm_subnet.postgres_subnet.id
+  backup_retention_days = var.postgresql_backup_retention_days
+  geo_redundant_backup  = false
+  enable_ha             = var.enable_ha
+  enable_azure_ad_auth  = var.enable_azure_ad_auth
+  tags                  = var.tags
 
-#   depends_on = [module.postgesql_private_dns_zone]
-# }
+  depends_on = [module.postgesql_private_dns_zone]
+}
 
 # module "postgresql_private_endpoint" {
 #   source = "../modules/private_endpoint"
@@ -253,9 +264,9 @@ module "vm_linux" {
 # module "apim_private_dns_zone" {
 #   source              = "../modules/private_dns_zone"
 #   zone_name           = "privatelink.azure-api.net"
-#   resource_group_name = module.resource_group.name
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
 #   vnet_link_name      = "apim-vnet-link"
-#   virtual_network_id  = module.vnet.id
 #   registration_enabled = false
 #   tags = {
 #     Environment = var.environment
