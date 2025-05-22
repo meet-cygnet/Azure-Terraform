@@ -6,7 +6,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version  = var.kubernetes_version
   
   private_cluster_enabled = true
-  # private_dns_zone_id    = var.private_dns_zone_id
+  private_dns_zone_id    = var.private_dns_zone_id
   
   default_node_pool {
     name                = var.default_node_pool_name
@@ -22,7 +22,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   network_profile {
     network_plugin     = "azure"
-    outbound_type = var.outbound_type
+    # outbound_type = var.outbound_type
     # service_cidr       = var.service_cidr
     # dns_service_ip     = var.dns_service_ip
   }

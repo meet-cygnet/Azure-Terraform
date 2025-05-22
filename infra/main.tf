@@ -17,11 +17,11 @@ data "azurerm_virtual_network" "vnet" {
   resource_group_name = data.azurerm_resource_group.rg.name
 }
 
-# data "azurerm_subnet" "aks_subnet" {
-#   name                 = "aks-subnet"
-#   virtual_network_name = var.vnet_name
-#   resource_group_name  = data.azurerm_resource_group.rg.name
-# }
+data "azurerm_subnet" "aks_subnet" {
+  name                 = "aks-subnet"
+  virtual_network_name = var.vnet_name
+  resource_group_name  = data.azurerm_resource_group.rg.name
+}
 
 # data "azurerm_subnet" "reserved_subnet" {
 #   name                 = "apim-subnet"
@@ -59,27 +59,6 @@ data "azurerm_subnet" "postgres_subnet" {
   resource_group_name  = data.azurerm_resource_group.rg.name
 }
 
-######################## Linux VM Module #########################################
-
-module "vm_linux" {
-  source               = "../modules/vm"
-  vm_name              = var.linux_vm_name
-  location             = data.azurerm_resource_group.rg.location
-  resource_group_name  = data.azurerm_resource_group.rg.name
-  vm_size              = var.linux_vm_size
-  admin_username       = var.linux_vm_admin_username
-  os_type              = var.linux_vm_os_type
-  use_existing_ssh_key = var.linux_vm_use_existing_ssh_key
-  vm_version           = var.linux_vm_version
-  vm_sku               = var.linux_vm_sku
-  vm_publisher         = var.linux_vm_publisher
-  vm_offer             = var.linux_vm_offer
-  tags                 = var.tags
-  enable_public_ip     = var.enable_public_ip # Set to true if you want to enable public IP
-  subnet_id            = data.azurerm_subnet.bastion_subnet.id # Reference to the subnet ID
-}
-
-
 ######################## Windows VM Module #########################################
 # module "vm_windows" {
 #   source               = "../modules/vm"  # Path to the VM module
@@ -113,105 +92,90 @@ module "vm_linux" {
 # }
 
 # Create private DNS zone for AKS
-# module "aks_private_dns_zone" {
-#   source              = "../modules/private_dns_zone"
-#   zone_name           = "privatelink.${replace(var.location, " ", "")}.azmk8s.io"
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   vnet_link_name      = var.vnet_link_name
-#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
-#   tags                = var.tags
-#   depends_on          = [data.azurerm_virtual_network.vnet]
-# }
-
-
-# # Create AKS cluster in private mode
-# module "aks" {
-#   source = "../modules/aks"
-
-#   cluster_name        = var.aks_cluster_name
-#   location            = var.location
-#   resource_group_name = data.azurerm_resource_group.rg.name
-#   kubernetes_version  = var.aks_kubernetes_version
-#   # private_dns_zone_id        = module.aks_private_dns_zone.id
-#   subnet_id = data.azurerm_subnet.aks_subnet.id
-#   # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
-#   client_id              = var.client_id
-#   client_secret          = var.client_secret
-#   # sku_tier               = var.aks_sku_tier
-#   default_node_pool_name = "systempool"
-
-#   # enable_auto_scaling   = true
-#   min_count = 1
-#   max_count = 3
-#   max_pods  = 30
-
-#   tags = var.tags
-
-#   depends_on = [module.aks_private_dns_zone]
-# }
-
-# module "aks_private_endpoint" {
-#   source = "../modules/private_endpoint"
-
-#   name                           = "aks-private-endpoint"
-#   location                       = data.azurerm_resource_group.rg.location
-#   resource_group_name            = data.azurerm_resource_group.rg.name
-#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-#   private_connection_resource_id = module.aks.cluster_id
-#   subresource_names              = ["management"]
-#   private_dns_zone_id            = module.aks_private_dns_zone.id
-#   tags                           = var.tags
-#   depends_on                     = [module.aks, module.aks_private_dns_zone]
-# }
-
-#################### POSTGRESQL Module ############################################
-module "postgesql_private_dns_zone" {
-  source = "../modules/private_dns_zone"
-
-  zone_name           = "privatelink.postgres.database.azure.com"
+module "aks_private_dns_zone" {
+  source              = "../modules/private_dns_zone"
+  zone_name           = "privatelink.${replace(var.location, " ", "")}.azmk8s.io"
   resource_group_name = data.azurerm_resource_group.rg.name
+  vnet_link_name      = var.vnet_link_name
   virtual_network_id  = data.azurerm_virtual_network.vnet.id
-  vnet_link_name      = "postgresql-vnet-link"
   tags                = var.tags
   depends_on          = [data.azurerm_virtual_network.vnet]
 }
 
-module "postgresql" {
-  source = "../modules/postgresql"
+# Create AKS cluster in private mode
+module "aks" {
+  source = "../modules/aks"
 
-  name                = var.postgresql_name
-  location            = data.azurerm_resource_group.rg.location
+  cluster_name        = var.aks_cluster_name
+  location            = var.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  admin_username      = var.postgresql_admin_username
-  admin_password      = var.postgresql_admin_password # store in a secret manager in production
-  sku_name            = var.postgresql_sku_name
-  postgresql_version  = var.postgresql_version
-  storage_mb          = 32768
-  storage_tier        = var.storage_tier
-  zone                = "1"
-  private_dns_zone_id   = module.postgesql_private_dns_zone.id
-  delegated_subnet_id   = data.azurerm_subnet.postgres_subnet.id
-  backup_retention_days = var.postgresql_backup_retention_days
-  geo_redundant_backup  = false
-  enable_ha             = var.enable_ha
-  enable_azure_ad_auth  = var.enable_azure_ad_auth
-  tags                  = var.tags
+  kubernetes_version  = var.aks_kubernetes_version
+  private_dns_zone_id        = module.aks_private_dns_zone.id
+  subnet_id = data.azurerm_subnet.aks_subnet.id
+  # user_assigned_identity_id  = azurerm_user_assigned_identity.cluster.id
+  client_id              = var.client_id
+  client_secret          = var.client_secret
+  # sku_tier               = var.aks_sku_tier
+  default_node_pool_name = "systempool"
 
-  depends_on = [module.postgesql_private_dns_zone]
+  # enable_auto_scaling   = true
+  min_count = 1
+  max_count = 3
+  max_pods  = 30
+
+  tags = var.tags
+
+  depends_on = [module.aks_private_dns_zone]
 }
 
-# module "postgresql_private_endpoint" {
-#   source = "../modules/private_endpoint"
+module "aks_private_endpoint" {
+  source = "../modules/private_endpoint"
 
-#   name                           = "postgresql-private-endpoint"
-#   location                       = data.azurerm_resource_group.rg.location
-#   resource_group_name            = data.azurerm_resource_group.rg.name
-#   private_endpoint_subnet_id     = data.azurerm_subnet.endpoints_subnet.id
-#   private_connection_resource_id = module.postgresql.postgresql_server_id
-#   subresource_names              = ["postgresqlServer"]
-#   private_dns_zone_id            = module.postgesql_private_dns_zone.id
-#   tags                           = var.tags
-#   depends_on                     = [module.postgresql]
+  name                           = "aks-private-endpoint"
+  location                       = data.azurerm_resource_group.rg.location
+  resource_group_name            = data.azurerm_resource_group.rg.name
+  private_endpoint_subnet_id     = data.azurerm_subnet.bastion_subnet.id
+  private_connection_resource_id = module.aks.cluster_id
+  subresource_names              = ["management"]
+  private_dns_zone_id            = module.aks_private_dns_zone.id
+  tags                           = var.tags
+  depends_on                     = [module.aks, module.aks_private_dns_zone]
+}
+
+#################### POSTGRESQL Module ############################################
+# module "postgesql_private_dns_zone" {
+#   source = "../modules/private_dns_zone"
+
+#   zone_name           = "privatelink.postgres.database.azure.com"
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   virtual_network_id  = data.azurerm_virtual_network.vnet.id
+#   vnet_link_name      = "postgresql-vnet-link"
+#   tags                = var.tags
+#   depends_on          = [data.azurerm_virtual_network.vnet]
+# }
+
+# module "postgresql" {
+#   source = "../modules/postgresql"
+
+#   name                = var.postgresql_name
+#   location            = data.azurerm_resource_group.rg.location
+#   resource_group_name = data.azurerm_resource_group.rg.name
+#   admin_username      = var.postgresql_admin_username
+#   admin_password      = var.postgresql_admin_password # store in a secret manager in production
+#   sku_name            = var.postgresql_sku_name
+#   postgresql_version  = var.postgresql_version
+#   storage_mb          = 32768
+#   storage_tier        = var.storage_tier
+#   zone                = "1"
+#   private_dns_zone_id   = module.postgesql_private_dns_zone.id
+#   delegated_subnet_id   = data.azurerm_subnet.postgres_subnet.id
+#   backup_retention_days = var.postgresql_backup_retention_days
+#   geo_redundant_backup  = false
+#   enable_ha             = var.enable_ha
+#   enable_azure_ad_auth  = var.enable_azure_ad_auth
+#   tags                  = var.tags
+
+#   depends_on = [module.postgesql_private_dns_zone]
 # }
 
 #################### Redis Module #######################################

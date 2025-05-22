@@ -21,12 +21,12 @@ variable "tags" {
 
 variable "routes" {
   description = "Map of routes to be created in the route table"
-  type = map(object({
+  type = list(object({
+    name                   = string
     address_prefix         = string
     next_hop_type          = string
     next_hop_in_ip_address = optional(string)
   }))
-  default = {}
 }
 
 variable "subnet_id" {

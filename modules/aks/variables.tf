@@ -33,10 +33,10 @@ variable "kubernetes_version" {
   type        = string
 }
 
-# variable "private_dns_zone_id" {
-#   description = "ID of the private DNS zone for the AKS cluster"
-#   type        = string
-# }
+variable "private_dns_zone_id" {
+  description = "ID of the private DNS zone for the AKS cluster"
+  type        = string
+}
 
 variable "default_node_pool_name" {
   description = "Name of the default node pool"
@@ -115,11 +115,11 @@ variable "tags" {
   default     = {}
 }
 
-variable "outbound_type" {
-  description = "Outbound type for the AKS cluster"
-  type        = string
-  default     = "userDefinedRouting"
-}
+# variable "outbound_type" {
+#   description = "Outbound type for the AKS cluster"
+#   type        = string
+#   default     = "userDefinedRouting"
+# }
 
 # variable "user_assigned_identity_id" {
 #   description = "The ID of the User Assigned Identity to use for the AKS cluster"

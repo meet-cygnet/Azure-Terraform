@@ -41,25 +41,27 @@ variable "tags" {
   description = "A mapping of tags to assign to the resources"
   type        = map(string)
 }
+
 ######################## AKS VARIABLES #########################################
-# variable "vnet_link_name" {
-#   description = "The name of the Virtual Network Link for the AKS private DNS zone"
-#   type        = string
-# }
+variable "vnet_link_name" {
+  description = "The name of the Virtual Network Link for the AKS private DNS zone"
+  type        = string
+}
 
-# variable "aks_subnet_name" {
-#   description = "aks subnet"
-#   type        = string
-# }
-# variable "aks_cluster_name" {
-#   description = "Name of the AKS cluster"
-#   type        = string
-# }
+variable "aks_subnet_name" {
+  description = "aks subnet"
+  type        = string
+}
 
-# variable "aks_kubernetes_version" {
-#   description = "Version of Kubernetes for AKS cluster"
-#   type        = string
-# }
+variable "aks_cluster_name" {
+  description = "Name of the AKS cluster"
+  type        = string
+}
+
+variable "aks_kubernetes_version" {
+  description = "Version of Kubernetes for AKS cluster"
+  type        = string
+}
 
 # variable "aks_service_cidr" {
 #   description = "Network range for Kubernetes service in AKS cluster. Should be a subset of the address space."
@@ -72,55 +74,55 @@ variable "tags" {
 # }
 ######################### POSTGRESQL VARIABLES ######################
 
-variable "postgresql_admin_username" {
-  description = "The admin username for the postgresql server"
-  type        = string
-}
-
-variable "postgresql_admin_password" {
-  description = "The admin password for the postgresql server"
-  type        = string
-}
-
-variable "postgresql_name" {
-  description = "name of postgresql server"
-  type        = string
-}
-
-variable "postgresql_sku_name" {
-  description = "value of sku name"
-  type        = string
-}
-
-variable "postgresql_version" {
-  description = "version of postgresql"
-  type        = string
-}
-
-# variable "postgresql_ha_mode"{
-#   description = "ha mode of postgresql"
+# variable "postgresql_admin_username" {
+#   description = "The admin username for the postgresql server"
 #   type        = string
 # }
 
-variable "enable_ha" {
-  description = "enable_ha"
-  type        = bool
-}
+# variable "postgresql_admin_password" {
+#   description = "The admin password for the postgresql server"
+#   type        = string
+# }
 
-variable "enable_azure_ad_auth" {
-  description = "enable_azure_ad_auth"
-  type        = bool
-}
+# variable "postgresql_name" {
+#   description = "name of postgresql server"
+#   type        = string
+# }
 
-variable "postgresql_backup_retention_days" {
-  description = "postgresql_backup_retention_days"
-  type        = number
-}
+# variable "postgresql_sku_name" {
+#   description = "value of sku name"
+#   type        = string
+# }
 
-variable "storage_tier" {
-  description = "storage_tier"
-  type        = string
-}
+# variable "postgresql_version" {
+#   description = "version of postgresql"
+#   type        = string
+# }
+
+# # variable "postgresql_ha_mode"{
+# #   description = "ha mode of postgresql"
+# #   type        = string
+# # }
+
+# variable "enable_ha" {
+#   description = "enable_ha"
+#   type        = bool
+# }
+
+# variable "enable_azure_ad_auth" {
+#   description = "enable_azure_ad_auth"
+#   type        = bool
+# }
+
+# variable "postgresql_backup_retention_days" {
+#   description = "postgresql_backup_retention_days"
+#   type        = number
+# }
+
+# variable "storage_tier" {
+#   description = "storage_tier"
+#   type        = string
+# }
 
 ###################################################################
 ##################### REDIS VARIABLES ##############################
@@ -230,86 +232,27 @@ variable "storage_tier" {
 
 # }
 
-
-######################## VM Variables ############################
-
-variable "linux_vm_name" {
-  description = "The name of the Linux VM"
-  type        = string
-}
-
-variable "linux_vm_location" {
-  description = "The Azure region where the VM will be created"
-  type        = string
-}
-
-variable "linux_vm_size" {
-  description = "The size of the VM"
-  type        = string
-}
-
-variable "linux_vm_admin_username" {
-  description = "Admin username for the VM"
-  type        = string
-}
-
-variable "linux_vm_os_type" {
-  description = "The operating system type (linux)"
-  type        = string
-  default     = "linux"
-}
-
-variable "linux_vm_use_existing_ssh_key" {
-  description = "Whether to use an existing SSH key"
-  type        = bool
-}
-
-variable "linux_vm_version" {
-  description = "The version of the VM image"
-  type        = string
-}
-
-variable "linux_vm_sku" {
-  description = "The SKU of the VM image"
-  type        = string
-}
-
-variable "linux_vm_publisher" {
-  description = "The publisher of the VM image"
-  type        = string
-}
-
-variable "linux_vm_offer" {
-  description = "The offer of the VM image"
-  type        = string
-}
-
-variable "enable_public_ip" {
-  description = "Whether to enable a public IP for the VM"
-  type        = bool
-}
-
 ############################ APIM Variables ###############################
 
-variable "apim_name" {
-  description = "The name of the API Management instance"
-  type        = string
-}
+# variable "apim_name" {
+#   description = "The name of the API Management instance"
+#   type        = string
+# }
 
-variable "apim_sku_name" {
-  description = "The SKU name of the API Management instance"
-  type        = string
-}
+# variable "apim_sku_name" {
+#   description = "The SKU name of the API Management instance"
+#   type        = string
+# }
 
-variable "apim_publisher_name" {
-  description = "The name of the publisher for the API Management instance"
-  type        = string
-}
+# variable "apim_publisher_name" {
+#   description = "The name of the publisher for the API Management instance"
+#   type        = string
+# }
 
-variable "apim_publisher_email" {
-  description = "The email of the publisher for the API Management instance"
-  type        = string
-}
+# variable "apim_publisher_email" {
+#   description = "The email of the publisher for the API Management instance"
+#   type        = string
+# }
 
 ################################ Event Hub Variables ###############################
 # variable "eventhub_namespace_name" {
